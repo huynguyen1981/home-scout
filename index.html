@@ -390,8 +390,13 @@
             const querySnapshot = await getDocs(collection(db, "houses"));
             housesList = [];
             querySnapshot.forEach((doc) => {
-                housesList.push({ id: doc.id, ...doc.data() });
-            });
+                const data = doc.data();
+                        // Lấy dữ liệu từ object 'info' ra ngoài để code render cũ của bồ chạy được
+                        // Bồ gộp ID của doc vào cùng với dữ liệu bên trong info
+                        housesList.push({ 
+                            id: doc.id, 
+                            ...data.info // Bung hết mọi thứ bên trong info ra cấp cao nhất
+        });            });
             // --- DÒNG KIỂM TRA QUAN TRỌNG ---
             console.log("Dữ liệu đã tải về:", housesList); 
             // --------------------------------
@@ -525,17 +530,19 @@
                 }
 
                 const houseData = {
-                    address: address,
-                    price: formattedPrice,
-                    estMonthly: estMonthly,
-                    zip: zip,
-                    size: document.getElementById('new-size').value || "2,000",
-                    year: document.getElementById('new-year').value || "2005",
-                    garage: document.getElementById('new-garage').value || "2 Xe",
-                    carpet: document.getElementById('new-carpet').value,
-                    img: imageUrl || document.getElementById('image-preview').src,
-                    tags: document.getElementById('new-tags').value ? document.getElementById('new-tags').value.split(',').map(t => t.trim()) : ["Mới Cập Nhật"],
-                    mapUrl: `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address)}+OKC+${zip}`,
+                    info: {
+                        address: address,
+                        price: formattedPrice,
+                        estMonthly: estMonthly,
+                        zip: zip,
+                        size: document.getElementById('new-size').value || "2,000",
+                        year: document.getElementById('new-year').value || "2005",
+                        garage: document.getElementById('new-garage').value || "2 Xe",
+                        carpet: document.getElementById('new-carpet').value,
+                        img: imageUrl || document.getElementById('image-preview').src,
+                        tags: document.getElementById('new-tags').value ? document.getElementById('new-tags').value.split(',').map(t => t.trim()) : ["Mới Cập Nhật"],
+                        mapUrl: `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address)}+OKC+${zip}`
+                    }
                 };
 
                 if (editId) {
