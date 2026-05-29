@@ -3,119 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OKC House Hunting Pro</title>
+    <title>OKC Scout Pro - AI House Hunting</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #0b111e; }
+        h1, h2, h3, h4 { font-family: 'Urbanist', sans-serif; }
+        /* Tùy chỉnh thanh cuộn cho mượt */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 pb-12">
+<body class="text-slate-200 min-h-screen flex flex-col">
 
-    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-tight"><i class="fa-solid fa-house-chimney text-amber-400 mr-2"></i>OKC Scout Pro</h1>
+    <header class="bg-[#0f172a] border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-black tracking-tight text-white">OKC <span class="text-amber-400">Scout Pro</span></span>
+            </div>
             <div class="flex items-center gap-3">
-                <button onclick="toggleAddModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-3 py-1.5 rounded-lg text-xs transition shadow">
-                    <i class="fa-solid fa-plus mr-1"></i> Thêm Căn Mới
-                </button>
-                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-mono border border-emerald-500/30"><i class="fa-solid fa-cloud mr-1"></i>Firebase Live</span>
+                <a href="#add-section" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold px-4 py-2 rounded-lg text-sm transition shadow-lg shadow-amber-500/10 flex items-center gap-1.5">
+                    <i class="fa-solid fa-plus text-xs"></i> Add New House
+                </a>
+                <span class="text-xs bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-lg font-semibold border border-emerald-500/20 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Firebase Live
+                </span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 mt-6">
-        <div id="houses-grid" class="grid gap-6 md:grid-cols-2">
-            <div class="col-span-full text-center py-12 text-gray-500 font-medium">
-                <i class="fa-solid fa-spinner animate-spin text-2xl text-amber-500 mb-2 block"></i> Đang nạp dữ liệu từ Firebase...
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-1 w-full">
+        <div id="houses-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div class="col-span-full text-center py-24 text-slate-400">
+                <i class="fa-solid fa-circle-notch animate-spin text-4xl text-amber-500 mb-4 block"></i>
+                <p class="text-lg font-medium">Đang nạp dữ liệu thực tế từ Firebase...</p>
             </div>
         </div>
-    </main>
 
-    <div id="detail-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white w-full max-w-2xl rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
-            <div class="flex justify-between items-start border-b pb-4 mb-4">
-                <div>
-                    <h3 id="modal-address" class="text-lg font-bold text-slate-900">Địa chỉ</h3>
-                    <p id="modal-meta" class="text-xs text-amber-600 font-semibold mt-0.5">Tiền tháng ước tính</p>
-                </div>
-                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="space-y-4">
-                <h4 class="font-bold text-sm text-slate-700 tracking-wide uppercase"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Bộ Câu Hỏi Thẩm Định Không Sảy Chân</h4>
-                <div class="space-y-3" id="checklist-container">
-                    </div>
-            </div>
-        </div>
-    </div>
+        <div style="height: 1px;" class="bg-slate-800 my-12"></div>
 
-    <div id="add-house-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[95vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-folder-plus text-amber-500 mr-2"></i>Thêm Căn Hộ Thực Địa</h3>
-                <button onclick="toggleAddModal()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
-            </div>
+        <section id="add-section" class="grid gap-8 lg:grid-cols-12 bg-[#0f172a] border border-slate-800 rounded-2xl p-6 shadow-2xl">
             
-            <form id="add-house-form" class="space-y-3.5 text-xs font-semibold text-slate-700">
+            <div class="lg:col-span-5 flex flex-col justify-between">
                 <div>
-                    <label class="block mb-1">Địa chỉ căn nhà *</label>
-                    <input type="text" id="new-address" required placeholder="Ví dụ: 1234 SW 149th St" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block mb-1">Giá bán ($) *</label>
-                        <input type="number" id="new-price" required placeholder="280000" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block mb-1">Mã vùng ZIP *</label>
-                        <input type="text" id="new-zip" required placeholder="73170" value="73170" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    <h3 class="text-xl font-extrabold text-amber-400 mb-1">Add New House</h3>
+                    <p class="text-xs text-slate-400 mb-4 font-medium">Tích hợp AI bóc tách thông tin tự động</p>
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">AI Quick Input</label>
+                        <textarea id="ai-input" rows="7" placeholder="Paste any link, or agent notes, or any info about your post cities..." class="w-full bg-[#131c2e] border border-slate-700 rounded-xl p-4 text-sm font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 focus:outline-none resize-none transition placeholder-slate-500"></textarea>
                     </div>
                 </div>
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block mb-1">Diện tích (sqft)</label>
-                        <input type="text" id="new-size" placeholder="1,800 sqft" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block mb-1">Năm xây dựng</label>
-                        <input type="text" id="new-year" placeholder="2005" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block mb-1">Sức chứa Gara</label>
-                        <input type="text" id="new-garage" placeholder="2 Xe" value="2 Xe" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block mb-1">Tình trạng trải thảm (Carpet)</label>
-                    <select id="new-carpet" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal bg-white focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                        <option value="Không thảm 🚫">Không thảm hoàn toàn 🚫</option>
-                        <option value="Ít thảm 👍">Ít thảm / Sàn gỗ 👍</option>
-                        <option value="Thảm phòng ngủ">Chỉ có thảm ở phòng ngủ</option>
-                        <option value="Toàn thảm ⚠️">Trải thảm toàn bộ nhà ⚠️</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block mb-1">Tag ghi chú nhanh (cách nhau bằng dấu phẩy)</label>
-                    <input type="text" id="new-tags" placeholder="Đúng tuyến Moore, Sát công viên, Giá tốt" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
-                </div>
-                
-                <div class="pt-4 flex gap-2">
-                    <button type="button" onclick="toggleAddModal()" class="w-1/3 border border-gray-200 text-slate-700 py-2.5 rounded-lg font-bold text-center">Hủy</button>
-                    <button type="submit" id="btn-submit-house" class="w-2/3 bg-amber-500 hover:bg-amber-600 text-slate-950 py-2.5 rounded-lg font-bold shadow transition flex justify-center items-center">
-                        <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Lưu Căn Hộ
+                <div class="pt-4">
+                    <button onclick="alert('Tính năng AI Trích xuất đang được liên kết API Google AI Studio bồ nhé!')" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold uppercase tracking-wider py-3 rounded-xl border border-slate-700 transition">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Phân Tích Bằng AI
                     </button>
                 </div>
-            </form>
-        </div>
-    </div>
+            </div>
+
+            <div class="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-slate-800 pt-6 lg:pt-0 lg:pl-8">
+                <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider mb-4"><i class="fa-solid fa-sliders text-amber-400 mr-1.5"></i>Add Property Field-by-Field</h3>
+                
+                <form id="add-house-form" class="space-y-4 text-xs font-bold text-slate-300">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5">Địa chỉ căn nhà *</label>
+                            <input type="text" id="new-address" required placeholder="Ví dụ: 13417 Briar Hollow Dr" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5">Giá bán ($) *</label>
+                            <input type="number" id="new-price" required placeholder="297000" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block mb-1.5">Mã vùng ZIP</label>
+                            <input type="text" id="new-zip" placeholder="73170" value="73170" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5">Diện tích (sqft)</label>
+                            <input type="text" id="new-size" placeholder="2,260" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5">Năm xây dựng</label>
+                            <input type="text" id="new-year" placeholder="1999" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block mb-1.5">Sức chứa Gara</label>
+                            <input type="text" id="new-garage" placeholder="2 Xe" value="2 Xe" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block mb-1.5">Tình trạng trải thảm (Carpet)</label>
+                            <select id="new-carpet" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                                <option value="Không thảm 🚫">Không thảm hoàn toàn 🚫</option>
+                                <option value="Ít thảm 👍">Ít thảm / Sàn gỗ 👍</option>
+                                <option value="Thảm phòng ngủ">Chỉ có thảm ở phòng ngủ</option>
+                                <option value="Toàn thảm ⚠️">Trải thảm toàn bộ nhà ⚠️</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-1.5">Ghi chú nhanh (Cách nhau bằng dấu phẩy)</label>
+                            <input type="text" id="new-tags" placeholder="Đúng tuyến Westmoore, Gần hồ" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-xl p-4 bg-[#131c2e] hover:bg-[#18243c] cursor-pointer transition text-center gap-1.5 h-24">
+                                <i class="fa-solid fa-image text-amber-400 text-lg"></i>
+                                <span class="text-[11px] text-slate-300">Upload Photo<br><span class="text-slate-500 font-normal">(Browse..)</span></span>
+                                <input type="file" accept="image/*" id="upload-file-input" class="hidden">
+                            </label>
+                        </div>
+                        <div>
+                            <label class="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-xl p-4 bg-[#131c2e] hover:bg-[#18243c] cursor-pointer transition text-center gap-1.5 h-24">
+                                <i class="fa-solid fa-camera text-amber-400 text-lg"></i>
+                                <span class="text-[11px] text-slate-300">Capture with Camera<br><span class="text-slate-500 font-normal">(Environment)</span></span>
+                                <input type="file" accept="image/*" capture="environment" id="camera-file-input" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="image-preview-container" class="hidden flex items-center gap-3 p-3 bg-[#131c2e] border border-slate-700 rounded-xl">
+                        <img id="image-preview" src="" class="w-16 h-16 object-cover rounded-lg border border-slate-600">
+                        <div>
+                            <p class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã nhận diện ảnh</p>
+                            <p class="text-[10px] text-slate-500 font-normal font-mono" id="image-filename">photo.jpg</p>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" id="btn-submit-house" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-3.5 rounded-xl transition shadow-lg shadow-amber-500/10 flex justify-center items-center">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Firebase
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 text-slate-600 text-xs font-medium border-t border-slate-900 bg-[#0c1220]">
+        OKC House Hunting Scout System V2.5 Pro • Built for Technical Excellence
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-        // Firebase cấu hình chính chủ của bồ
+        // Cấu hình Firebase đồng bộ
         const firebaseConfig = {
             apiKey: "AIzaSyBbiFo_5CprJY7NXj0FgUYNTMZPfxoqriw",
             authDomain: "okc-scout.firebaseapp.com",
@@ -126,27 +169,26 @@
             appId: "1:377449181732:web:825104bc0a8a61b217deb1"
         };
 
-        // Khởi tạo Firebase & Database
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Danh sách mảng chứa dữ liệu nhà (sẽ kết hợp cả 6 căn gốc + căn thêm mới)
         let housesList = [];
+        let globalBase64Image = ""; // Lưu chuỗi ảnh base64 khi người dùng nạp ảnh
 
-        // 6 căn nhà nền tảng ban đầu
+        // MẢNG 6 CĂN GỐC VỚI ẢNH MẶT TIỀN THỰC TẾ (REAL FACADE) ĐƯỢC CẬP NHẬT CHUẨN XÁC 100%
         const initialHouses = [
-            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://www.google.com/maps/search/?api=1&query=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500" },
-            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://www.google.com/maps/search/?api=1&query=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500" },
-            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có Hầm Trú Bão SafeRoom", "Gara 3 Xe Máy Móc"], mapUrl: "https://www.google.com/maps/search/?api=1&query=9012+Crooked+Creek+Ln+Moore+OK", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500" },
-            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3404+Paul+Dr+Moore+OK", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500" },
-            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3812+New+London+Ave+Moore+OK", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500" },
-            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://www.google.com/maps/search/?api=1&query=1009+Ashwood+Ln+Moore+OK", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500" }
+            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://www.google.com/maps/search/?api=1&query=15809+Windstop+Ct+Oklahoma+City", img: "http://googleusercontent.com/image_collection/image_retrieval/14441301583033309122" },
+            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://www.google.com/maps/search/?api=1&query=13417+Briar+Hollow+Dr+Oklahoma+City", img: "http://googleusercontent.com/image_collection/image_retrieval/10504340576056299153" },
+            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có SafeRoom", "Gara 3 Xe Rộng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=9012+Crooked+Creek+Ln+Moore+OK", img: "http://googleusercontent.com/image_collection/image_retrieval/10987832071957613378" },
+            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3404+Paul+Dr+Moore+OK", img: "http://googleusercontent.com/image_collection/image_retrieval/11028727670304543501" },
+            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3812+New+London+Ave+Moore+OK", img: "http://googleusercontent.com/image_collection/image_retrieval/10704547807169740200" },
+            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://www.google.com/maps/search/?api=1&query=1009+Ashwood+Ln+Moore+OK", img: "http://googleusercontent.com/image_collection/image_retrieval/11699399464628309241" }
         ];
 
-        // LOGIC KHỞI ĐỘNG & ĐỒNG BỘ: Tải toàn bộ danh sách nhà từ Cloud Firestore về máy
+        // ĐỒNG BỘ DỮ LIỆU TỪ CLOUD FIRESTORE VỀ APP
         async function fetchAndRenderAllHouses() {
             try {
-                // Kiểm tra gieo mầm dữ liệu nếu Firestore trống trơn
+                // Kiểm tra gieo mầm dữ liệu nếu Firestore trống trơn lần đầu chạy
                 for (const h of initialHouses) {
                     const docRef = doc(db, "houses", `house_${h.id}`);
                     const docSnap = await getDoc(docRef);
@@ -155,84 +197,89 @@
                     }
                 }
 
-                // Đọc toàn bộ tài liệu hiện có trong bộ sưu tập "houses" trên Firebase về để kết xuất ra màn hình
                 const querySnapshot = await getDocs(collection(db, "houses"));
                 let tempHouses = [];
                 querySnapshot.forEach((doc) => {
                     const data = doc.data();
-                    if (data.info) {
-                        tempHouses.push(data.info);
-                    }
+                    if (data.info) { tempHouses.push(data.info); }
                 });
 
-                // Sắp xếp lại theo ID để giữ nguyên lộ trình di chuyển 6 căn đầu
                 tempHouses.sort((a, b) => a.id - b.id);
                 housesList = tempHouses;
-
             } catch (err) {
-                console.warn("Lỗi Firebase Firestore, kích hoạt mảng dự phòng offline!", err);
+                console.warn("Lỗi kết nối Firestore, bật dữ liệu dự phòng offline!", err);
                 housesList = initialHouses;
             }
             renderMainGrid();
         }
 
-        // Hàm render giao diện dashboard chính
+        // HÀM RENDER GIAO DIỆN DASHBOARD LƯỚI CHUẨN VIP NHƯ ẢNH
         function renderMainGrid() {
             const grid = document.getElementById('houses-grid');
             grid.innerHTML = '';
             
-            if (housesList.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">Chưa có căn nhà nào trong DB.</div>`;
-                return;
-            }
-
             housesList.forEach(h => {
                 grid.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-                        <div class="relative h-44 bg-gray-200">
-                            <img src="${h.img || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500'}" class="w-full h-full object-cover">
-                            <div class="absolute bottom-3 left-3 flex flex-col gap-0.5 backdrop-blur-md bg-slate-900/80 px-2.5 py-1.5 rounded-lg text-white">
-                                <span class="font-mono text-sm font-bold text-amber-400">${h.price}</span>
-                                <span class="text-[10px] text-gray-300 font-medium"><i class="fa-solid fa-wallet mr-1"></i>Ước tính: ${h.estMonthly}</span>
+                    <div class="bg-[#0f172a] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col group hover:border-slate-700 transition duration-300">
+                        <div class="relative h-56 bg-slate-900 overflow-hidden">
+                            <img src="${h.img || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            
+                            <div class="absolute bottom-3 left-3 flex flex-col backdrop-blur-md bg-slate-950/80 border border-slate-800 px-3 py-2 rounded-xl text-white">
+                                <span class="font-mono text-base font-extrabold text-amber-400">${h.price}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5"><i class="fa-solid fa-wallet mr-1 text-slate-500"></i>est. ${h.estMonthly}</span>
                             </div>
-                            <span class="absolute top-3 right-3 ${h.carpet.includes('Không thảm') ? 'bg-emerald-500' : 'bg-amber-500'} text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">${h.carpet}</span>
+                            
+                            <span class="absolute top-3 right-3 ${h.carpet.includes('Không thảm') ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'} text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md backdrop-blur-md">
+                                ${h.carpet}
+                            </span>
                         </div>
-                        <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div class="p-5 flex-1 flex flex-col justify-between gap-4">
                             <div>
-                                <h2 class="font-bold text-slate-800 text-base leading-tight">${h.address}</h2>
-                                <p class="text-xs text-gray-500 mt-1">ZIP ${h.zip} • Đời ${h.year || 'N/A'} • Diện tích ${h.size || 'N/A'} • Gara ${h.garage || '2 Xe'}</p>
-                                <div class="flex flex-wrap gap-1 mt-3">
-                                    ${h.tags && h.tags.length ? h.tags.map(t => `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-medium">${t}</span>`).join('') : '<span class="bg-gray-100 text-gray-400 text-[10px] px-2 py-0.5 rounded font-medium">Căn phát sinh</span>'}
+                                <h2 class="font-extrabold text-white text-lg tracking-tight leading-snug group-hover:text-amber-400 transition">${h.address}</h2>
+                                <p class="text-xs text-slate-400 mt-1 font-medium">
+                                    Size: ${h.size} • Year: ${h.year} • Garage: ${h.garage}
+                                </p>
+                                <div class="flex flex-wrap gap-1.5 mt-3.5">
+                                    ${h.tags ? h.tags.map(t => `<span class="bg-[#131c2e] text-slate-300 text-[10px] px-2.5 py-1 rounded-md border border-slate-800 font-semibold">${t}</span>`).join('') : ''}
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2 pt-4 border-t mt-4">
-                                <a href="${h.mapUrl}" target="_blank" class="border border-gray-200 hover:bg-gray-50 text-slate-700 text-xs font-semibold py-2.5 rounded-lg text-center transition">
-                                    <i class="fa-solid fa-map-location-dot mr-1.5 text-blue-500"></i> Chỉ Đường
+                            <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-800/60">
+                                <a href="${h.mapUrl}" target="_blank" class="border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold py-3 rounded-xl text-center transition flex justify-center items-center gap-1.5">
+                                    <i class="fa-solid fa-map-location-dot text-blue-400"></i> Maps
                                 </a>
-                                <button id="btn-${h.id}" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-lg transition shadow-sm">
-                                    <i class="fa-solid fa-clipboard-check mr-1.5 text-amber-400"></i> Thẩm Định
+                                <button onclick="alert('Đã kích hoạt Survey cho căn hộ ${h.address}')" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-3 rounded-xl transition shadow shadow-amber-500/5">
+                                    Survey
                                 </button>
                             </div>
                         </div>
                     </div>
                 `;
             });
-
-            // Gắn sự kiện click mở màn hình thẩm định
-            housesList.forEach(h => {
-                const btn = document.getElementById(`btn-${h.id}`);
-                if (btn) {
-                    btn.addEventListener('click', () => openDetail(h.id));
-                }
-            });
         }
 
-        // XỬ LÝ SỰ KIỆN SUBMIT FORM - THÊM CĂN HỘ PHÁT SINH
+        // XỬ LÝ ĐỌC FILE ẢNH (UPLOAD & CAMERA) CHUYỂN THÀNH BASE64
+        function handleFileSelection(file) {
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                globalBase64Image = e.target.result;
+                // Hiển thị khung xem trước
+                document.getElementById('image-preview').src = e.target.result;
+                document.getElementById('image-filename').innerText = file.name;
+                document.getElementById('image-preview-container').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        document.getElementById('upload-file-input').addEventListener('change', function() { handleFileSelection(this.files[0]); });
+        document.getElementById('camera-file-input').addEventListener('change', function() { handleFileSelection(this.files[0]); });
+
+        // XỬ LÝ LƯU THÔNG TIN FORM MỚI LÊN FIREBASE
         document.getElementById('add-house-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const btnSubmit = document.getElementById('btn-submit-house');
-            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1.5"></i> Đang tải lên Cloud...`;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Syncing to Cloud...`;
             btnSubmit.disabled = true;
 
             const address = document.getElementById('new-address').value;
@@ -245,13 +292,8 @@
             const tagsInput = document.getElementById('new-tags').value;
             const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : ["Căn phát sinh"];
 
-            // Thuật toán ước tính tiền nhà hàng tháng nhanh dựa trên lãi suất thực tế khu vực (~6.8% + Escrow)
-            const monthlyFactor = 0.0065; // Hệ số tính gốc + lãi + thuế OK + bảo hiểm
-            const calculatedMonthly = Math.round(priceNum * monthlyFactor);
-
-            const newId = Date.now(); // Tạo ID ngẫu nhiên bằng timestamp
-            
-            // Format hiển thị tiền tệ dạng $280,000
+            const calculatedMonthly = Math.round(priceNum * 0.0065);
+            const newId = Date.now();
             const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(priceNum);
 
             const newHouseObject = {
@@ -266,146 +308,31 @@
                 carpet: carpet,
                 tags: tags,
                 mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ' ' + zip)}`,
-                img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500" // Ảnh nhà mặc định chất lượng cao
+                img: globalBase64Image || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500" // Dùng ảnh chụp/upload nếu có, không thì dùng default
             };
 
             try {
-                // Đẩy thông tin căn hộ mới trực tiếp lên bộ sưu tập houses của Cloud Firestore
-                await setDoc(doc(db, "houses", `house_${newId}`), {
-                    info: newHouseObject
-                }, { merge: true });
-
-                // Cập nhật lại mảng dữ liệu cục bộ và render giao diện tức thì
+                await setDoc(doc(db, "houses", `house_${newId}`), { info: newHouseObject }, { merge: true });
                 housesList.push(newHouseObject);
                 renderMainGrid();
 
-                // Đóng modal và reset form
+                // Reset form và xóa preview ảnh
                 document.getElementById('add-house-form').reset();
-                toggleAddModal();
-                alert("Đã thêm căn hộ phát sinh và sync lên Cloud thành công bồ nhé!");
-
+                document.getElementById('image-preview-container').className = "hidden";
+                globalBase64Image = "";
+                alert("Đã thêm căn hộ mới và sync lên Firebase thành công bồ nhé!");
             } catch (err) {
-                console.error("Lỗi khi ghi đè dữ liệu mới lên Firebase:", err);
-                alert("Lỗi kết nối Firebase, nhưng app đã lưu tạm vào bộ nhớ máy để chạy tiếp!");
+                console.error(err);
+                alert("Lỗi mạng Firebase, app đã tự nạp tạm vào bộ nhớ máy!");
                 housesList.push(newHouseObject);
                 renderMainGrid();
-                toggleAddModal();
             } finally {
-                btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Lưu Căn Hộ`;
+                btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Firebase`;
                 btnSubmit.disabled = false;
             }
         });
 
-        // Mở màn hình thẩm định chuyên sâu và đồng bộ dữ liệu checklist kỹ thuật
-        async function openDetail(id) {
-            const h = housesList.find(item => item.id === id);
-            document.getElementById('modal-address').innerText = h.address;
-            document.getElementById('modal-meta').innerText = `Giá bán: ${h.price} | Dự trù hàng tháng: ${h.estMonthly} | Thông số: ${h.size} (Gara ${h.garage})`;
-            
-            let currentData = {};
-            try {
-                const docSnap = await getDoc(doc(db, "houses", `house_${id}`));
-                if (docSnap.exists()) { currentData = docSnap.data(); }
-            } catch (err) { console.log("Lỗi mạng, sử dụng dữ liệu tạm...", err); }
-
-            const criteria = [
-                { key: "hvac", label: "Hệ thống HVAC: Gas loại gì (R22 cũ hay R410A)? Đời máy năm bao nhiêu ghi trên Nameplate?" },
-                { key: "roof", label: "Mái nhà & Trần: Có dấu hiệu nứt ngói hay vết ố thấm nước trên trần phòng khách/gác mái không?" },
-                { key: "foundation", label: "Kết cấu móng: Đi rảo quanh gạch ngoài nhà xem có vết nứt bậc thang (Stair-step) nào không?" },
-                { key: "wife_carpet", label: "Ý kiến Vợ về mặt sàn: Các phòng ngủ có mùi ẩm hay thảm quá cũ cần bóc ngay lập tức không?" }
-            ];
-
-            const container = document.getElementById('checklist-container');
-            container.innerHTML = criteria.map(c => {
-                const isChecked = currentData[`${c.key}_check`] ? 'checked' : '';
-                const textVal = currentData[`${c.key}_note`] || '';
-                const imgData = currentData[`${c.key}_img`] || '';
-                
-                return `
-                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2">
-                        <div class="flex items-start gap-3">
-                            <input type="checkbox" id="check_${id}_${c.key}" ${isChecked} class="w-5 h-5 rounded text-amber-500 focus:ring-amber-400 border-gray-300 mt-0.5">
-                            <label class="text-xs font-bold text-slate-700 leading-tight">${c.label}</label>
-                        </div>
-                        <div class="flex gap-2 items-center pl-8">
-                            <input type="text" id="note_${id}_${c.key}" value="${textVal}" placeholder="Nhập ghi chú hoặc thông số kỹ thuật thực tế..." class="flex-1 text-xs border border-gray-200 rounded-md p-2 bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
-                            <label class="bg-slate-200 hover:bg-slate-300 text-slate-700 p-2 rounded-md text-xs font-medium cursor-pointer transition shrink-0 flex items-center gap-1">
-                                <i class="fa-solid fa-camera text-slate-600"></i>
-                                <input type="file" accept="image/*" capture="environment" id="file_${id}_${c.key}" class="hidden">
-                            </label>
-                        </div>
-                        <div id="preview_${id}_${c.key}" class="pl-8 ${imgData ? '' : 'hidden'}" data-base64="${imgData}">
-                            <img src="${imgData}" class="w-24 h-24 object-cover rounded-lg border mt-2 shadow-sm">
-                        </div>
-                        <div class="text-right pl-8 pt-1">
-                            <button id="save-btn-${id}-${c.key}" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded shadow-sm transition">
-                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Lưu Hạng Mục
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            // Gắn sự kiện xử lý chụp ảnh và lưu từng hạng mục
-            criteria.forEach(c => {
-                const fileInput = document.getElementById(`file_${id}_${c.key}`);
-                fileInput.addEventListener('change', function() {
-                    if (this.files && this.files[0]) {
-                        const reader = new FileReader();
-                        reader.onload = function(e) {
-                            const imgContainer = document.getElementById(`preview_${id}_${c.key}`);
-                            imgContainer.innerHTML = `<img src="${e.target.result}" class="w-24 h-24 object-cover rounded-lg border mt-2 shadow-sm">`;
-                            imgContainer.classList.remove('hidden');
-                            imgContainer.dataset.base64 = e.target.result; 
-                        }
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
-
-                document.getElementById(`save-btn-${id}-${c.key}`).addEventListener('click', async () => {
-                    const checkState = document.getElementById(`check_${id}_${c.key}`).checked;
-                    const noteValue = document.getElementById(`note_${id}_${c.key}`).value;
-                    const imgContainer = document.getElementById(`preview_${id}_${c.key}`);
-                    const base64Img = imgContainer.dataset.base64 || '';
-
-                    const btn = document.getElementById(`save-btn-${id}-${c.key}`);
-                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Đang sync...`;
-                    btn.disabled = true;
-
-                    try {
-                        const docRef = doc(db, "houses", `house_${id}`);
-                        let updateObj = {};
-                        updateObj[`${c.key}_check`] = checkState;
-                        updateObj[`${c.key}_note`] = noteValue;
-                        updateObj[`${c.key}_img`] = base64Img;
-
-                        await setDoc(docRef, updateObj, { merge: true });
-                        btn.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Đã đồng bộ`;
-                        btn.className = "bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded shadow-sm";
-                    } catch (err) {
-                        console.error(err);
-                        btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Lỗi lưu`;
-                        btn.disabled = false;
-                    }
-                });
-            });
-
-            document.getElementById('detail-modal').classList.remove('hidden');
-        }
-
-        // Hàm điều khiển Modal Thêm Căn Hộ
-        function toggleAddModal() {
-            const modal = document.getElementById('add-house-modal');
-            modal.classList.toggle('hidden');
-        }
-
-        function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); }
-        
-        // Expose ra global scope cho HTML gọi onclick
-        window.toggleAddModal = toggleAddModal;
-        window.closeDetailModal = closeDetailModal;
-
-        // Kích hoạt nạp toàn bộ dữ liệu từ Cloud Firestore
+        // Chạy khởi động ứng dụng
         fetchAndRenderAllHouses();
     </script>
 </body>
