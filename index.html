@@ -381,9 +381,8 @@
         let surveyFiles = {}; 
         let currentSurveyHouseId = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', async () => {
             await loadHousesFromFirestore();
-            // renderMainGrid();
             setupCriteriaImageHandlers();
         });
 
