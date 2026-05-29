@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKC House Hunting Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 pb-12">
+
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-tight"><i class="fa-solid fa-house-chimney text-amber-400 mr-2"></i>OKC Scout Pro</h1>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleAddModal()" class="bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold px-3 py-1.5 rounded-lg text-xs transition shadow">
+                    <i class="fa-solid fa-plus mr-1"></i> Thêm Căn Mới
+                </button>
+                <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-1 rounded-full font-mono border border-emerald-500/30"><i class="fa-solid fa-cloud mr-1"></i>Firebase Live</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 mt-6">
+        <div id="houses-grid" class="grid gap-6 md:grid-cols-2">
+            <div class="col-span-full text-center py-12 text-gray-500 font-medium">
+                <i class="fa-solid fa-spinner animate-spin text-2xl text-amber-500 mb-2 block"></i> Đang nạp dữ liệu từ Firebase...
+            </div>
+        </div>
+    </main>
+
+    <div id="detail-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white w-full max-w-2xl rounded-t-2xl sm:rounded-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl">
+            <div class="flex justify-between items-start border-b pb-4 mb-4">
+                <div>
+                    <h3 id="modal-address" class="text-lg font-bold text-slate-900">Địa chỉ</h3>
+                    <p id="modal-meta" class="text-xs text-amber-600 font-semibold mt-0.5">Tiền tháng ước tính</p>
+                </div>
+                <button onclick="closeDetailModal()" class="text-gray-400 hover:text-gray-600 text-xl p-1"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="space-y-4">
+                <h4 class="font-bold text-sm text-slate-700 tracking-wide uppercase"><i class="fa-solid fa-shield-halved text-amber-500 mr-2"></i>Bộ Câu Hỏi Thẩm Định Không Sảy Chân</h4>
+                <div class="space-y-3" id="checklist-container">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-house-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-folder-plus text-amber-500 mr-2"></i>Thêm Căn Hộ Phát Sinh</h3>
+                <button onclick="toggleAddModal()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p class="text-xs text-gray-500 mb-4">Tính năng thêm căn hộ mới đồng bộ trực tiếp lên hệ thống đang được tối ưu hóa cho đợt cập nhật tiếp theo.</p>
+            <button onclick="toggleAddModal()" class="w-full bg-slate-800 text-white text-xs font-semibold py-2 rounded-lg">Đóng</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        // Firebase cấu hình chính chủ của bồ
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbiFo_5CprJY7NXj0FgUYNTMZPfxoqriw",
+            authDomain: "okc-scout.firebaseapp.com",
+            databaseURL: "https://okc-scout-default-rtdb.firebaseio.com",
+            projectId: "okc-scout",
+            storageBucket: "okc-scout.firebasestorage.app",
+            messagingSenderId: "377449181732",
+            appId: "1:377449181732:web:825104bc0a8a61b217deb1"
+        };
+
+        // Khởi tạo Firebase & Database
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Khởi tạo data gốc cho 6 căn theo lộ trình di chuyển tối ưu
+        const initialHouses = [
+            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://www.google.com/maps/search/?api=1&query=15809+Windstop+Ct+Oklahoma+City+OK+73170", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500" },
+            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://www.google.com/maps/search/?api=1&query=13417+Briar+Hollow+Dr+Oklahoma+City+OK+73170", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500" },
+            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có Hầm Trú Bão SafeRoom", "Gara 3 Xe Máy Móc"], mapUrl: "https://www.google.com/maps/search/?api=1&query=9012+Crooked+Creek+Ln+Moore+OK+73160", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500" },
+            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3404+Paul+Dr+Moore+OK+73160", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500" },
+            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3812+New+London+Ave+Moore+OK+73160", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500" },
+            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://www.google.com/maps/search/?api=1&query=1009+Ashwood+Ln+Moore+OK+73160", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500" }
+        ];
+
+        // LOGIC KỶ NIỆM: Tự động seed thông tin 6 căn nhà lên Cloud Firestore nếu là lần chạy đầu tiên
+        async function checkAndSeedDatabase() {
+            try {
+                for (const house of initialHouses) {
+                    const docRef = doc(db, "houses", `house_${house.id}`);
+                    const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        await setDoc(docRef, {
+                            info: {
+                                address: house.address,
+                                zip: house.zip,
+                                price: house.price,
+                                estMonthly: house.estMonthly,
+                                size: house.size,
+                                year: house.year,
+                                garage: house.garage,
+                                carpet: house.carpet
+                    }
+                        }, { merge: true });
+                    }
+                }
+            } catch (err) {
+                console.error("Lỗi đồng bộ cấu trúc ban đầu: ", err);
+            }
+            renderMain();
+        }
+
+        // Hàm render giao diện chính lấy danh sách từ mảng ban đầu
+        function renderMain() {
+            const grid = document.getElementById('houses-grid');
+            grid.innerHTML = '';
+            initialHouses.forEach(h => {
+                grid.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
+                        <div class="relative h-44 bg-gray-200">
+                            <img src="${h.img}" class="w-full h-full object-cover">
+                            <div class="absolute bottom-3 left-3 flex flex-col gap-0.5 backdrop-blur-md bg-slate-900/80 px-2.5 py-1.5 rounded-lg text-white">
+                                <span class="font-mono text-sm font-bold text-amber-400">${h.price}</span>
+                                <span class="text-[10px] text-gray-300 font-medium"><i class="fa-solid fa-wallet mr-1"></i>Ước tính: ${h.estMonthly}</span>
+                            </div>
+                            <span class="absolute top-3 right-3 ${h.carpet.includes('Không thảm') ? 'bg-emerald-500' : 'bg-amber-500'} text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm">${h.carpet}</span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h2 class="font-bold text-slate-800 text-base leading-tight">${h.address}</h2>
+                                <p class="text-xs text-gray-500 mt-1">ZIP ${h.zip} • Đời ${h.year} • Diện tích ${h.size} • Gara ${h.garage}</p>
+                                <div class="flex flex-wrap gap-1 mt-3">
+                                    ${h.tags.map(t => `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-medium">${t}</span>`).join('')}
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 pt-4 border-t mt-4">
+                                <a href="${h.mapUrl}" target="_blank" class="border border-gray-200 hover:bg-gray-50 text-slate-700 text-xs font-semibold py-2.5 rounded-lg text-center transition">
+                                    <i class="fa-solid fa-map-location-dot mr-1.5 text-blue-500"></i> Chỉ Đường
+                                </a>
+                                <button id="btn-${h.id}" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold py-2.5 rounded-lg transition shadow-sm">
+                                    <i class="fa-solid fa-clipboard-check mr-1.5 text-amber-400"></i> Thẩm Định
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Gắn sự kiện click mở modal
+            initialHouses.forEach(h => {
+                document.getElementById(`btn-${h.id}`).addEventListener('click', () => openDetail(h.id));
+            });
+        }
+
+        // Mở màn hình thẩm định chuyên sâu và đồng bộ Firebase
+        async function openDetail(id) {
+            const h = initialHouses.find(item => item.id === id);
+            document.getElementById('modal-address').innerText = h.address;
+            document.getElementById('modal-meta').innerText = `Giá bán: ${h.price} | Dự trù hàng tháng: ${h.estMonthly} | Thông số: ${h.size} (Gara ${h.garage})`;
+            
+            let currentData = {};
+            try {
+                const docSnap = await getDoc(doc(db, "houses", `house_${id}`));
+                if (docSnap.exists()) { currentData = docSnap.data(); }
+            } catch (err) { console.log("Lỗi mạng, sử dụng dữ liệu tạm...", err); }
+
+            const criteria = [
+                { key: "hvac", label: "Hệ thống HVAC: Gas loại gì (R22 cũ hay R410A)? Đời máy năm bao nhiêu ghi trên Nameplate?" },
+                { key: "roof", label: "Mái nhà & Trần: Có dấu hiệu nứt ngói hay vết ố thấm nước trên trần phòng khách/gác mái không?" },
+                { key: "foundation", label: "Kết cấu móng: Đi rảo quanh gạch ngoài nhà xem có vết nứt bậc thang (Stair-step) nào không?" },
+                { key: "wife_carpet", label: "Ý kiến Vợ về mặt sàn: Các phòng ngủ có mùi ẩm hay thảm quá cũ cần bóc ngay lập tức không?" }
+            ];
+
+            const container = document.getElementById('checklist-container');
+            container.innerHTML = criteria.map(c => {
+                const isChecked = currentData[`${c.key}_check`] ? 'checked' : '';
+                const textVal = currentData[`${c.key}_note`] || '';
+                const imgData = currentData[`${c.key}_img`] || '';
+                
+                return `
+                    <div class="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-2">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" id="check_${id}_${c.key}" ${isChecked} class="w-5 h-5 rounded text-amber-500 focus:ring-amber-400 border-gray-300 mt-0.5">
+                            <label class="text-xs font-bold text-slate-700 leading-tight">${c.label}</label>
+                        </div>
+                        <div class="flex gap-2 items-center pl-8">
+                            <input type="text" id="note_${id}_${c.key}" value="${textVal}" placeholder="Nhập ghi chú hoặc thông số kỹ thuật thực tế..." class="flex-1 text-xs border border-gray-200 rounded-md p-2 bg-white focus:outline-none focus:ring-1 focus:ring-amber-500">
+                            <label class="bg-slate-200 hover:bg-slate-300 text-slate-700 p-2 rounded-md text-xs font-medium cursor-pointer transition shrink-0 flex items-center gap-1">
+                                <i class="fa-solid fa-camera text-slate-600"></i>
+                                <input type="file" accept="image/*" capture="environment" id="file_${id}_${c.key}" class="hidden">
+                            </label>
+                        </div>
+                        <div id="preview_${id}_${c.key}" class="pl-8 ${imgData ? '' : 'hidden'}" data-base64="${imgData}">
+                            <img src="${imgData}" class="w-24 h-24 object-cover rounded-lg border mt-2 shadow-sm">
+                        </div>
+                        <div class="text-right pl-8 pt-1">
+                            <button id="save-btn-${id}-${c.key}" class="bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded shadow-sm transition">
+                                <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Lưu Hạng Mục
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Gắn sự kiện xử lý chụp ảnh và lưu cho từng hạng mục
+            criteria.forEach(c => {
+                const fileInput = document.getElementById(`file_${id}_${c.key}`);
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imgContainer = document.getElementById(`preview_${id}_${c.key}`);
+                            imgContainer.innerHTML = `<img src="${e.target.result}" class="w-24 h-24 object-cover rounded-lg border mt-2 shadow-sm">`;
+                            imgContainer.classList.remove('hidden');
+                            imgContainer.dataset.base64 = e.target.result; 
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+
+                document.getElementById(`save-btn-${id}-${c.key}`).addEventListener('click', async () => {
+                    const checkState = document.getElementById(`check_${id}_${c.key}`).checked;
+                    const noteValue = document.getElementById(`note_${id}_${c.key}`).value;
+                    const imgContainer = document.getElementById(`preview_${id}_${c.key}`);
+                    const base64Img = imgContainer.dataset.base64 || '';
+
+                    const btn = document.getElementById(`save-btn-${id}-${c.key}`);
+                    btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1"></i> Đang sync...`;
+                    btn.disabled = true;
+
+                    try {
+                        const docRef = doc(db, "houses", `house_${id}`);
+                        let updateObj = {};
+                        updateObj[`${c.key}_check`] = checkState;
+                        updateObj[`${c.key}_note`] = noteValue;
+                        updateObj[`${c.key}_img`] = base64Img;
+
+                        await setDoc(docRef, updateObj, { merge: true });
+                        btn.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> Đã đồng bộ`;
+                        btn.className = "bg-emerald-600 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded shadow-sm";
+                    } catch (err) {
+                        console.error(err);
+                        btn.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Lỗi lưu`;
+                        btn.disabled = false;
+                    }
+                });
+            });
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        // Hàm điều khiển Modal Thêm Căn Hộ
+        function toggleAddModal() {
+            const modal = document.getElementById('add-house-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); }
+        
+        // Expose các hàm điều khiển modal ra global window scope để ăn khớp với thuộc tính HTML onclick
+        window.toggleAddModal = toggleAddModal;
+        window.closeDetailModal = closeDetailModal;
+
+        // Kích hoạt chu trình kiểm tra và hiển thị dữ liệu
+        checkAndSeedDatabase();
+    </script>
+</body>
+</html>
