@@ -9,11 +9,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="manifest" href="manifest.json">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #0b111e; }
         h1, h2, h3, h4 { font-family: 'Urbanist', sans-serif; }
-        /* Khóa scroll cho background khi mở popup */
         .no-scroll { overflow: hidden; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -42,7 +42,7 @@
         <div id="houses-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <div class="col-span-full text-center py-24 text-slate-400">
                 <i class="fa-solid fa-circle-notch animate-spin text-4xl text-amber-500 mb-4 block"></i>
-                <p class="text-lg font-medium">Đang nạp dữ liệu thực tế từ Firebase...</p>
+                <p class="text-lg font-medium">Đang nạp dữ liệu thực tế bất động sản...</p>
             </div>
         </div>
 
@@ -51,8 +51,8 @@
         <section id="add-section" class="grid gap-8 lg:grid-cols-12 bg-[#0f172a] border border-slate-800 rounded-2xl p-6 shadow-2xl">
             <div class="lg:col-span-5 flex flex-col justify-between">
                 <div>
-                    <h3 class="text-xl font-extrabold text-amber-400 mb-1">Add New House</h3>
-                    <p class="text-xs text-slate-400 mb-4 font-medium">Tích hợp AI bóc tách thông tin tự động</p>
+                    <h3 id="form-section-title" class="text-xl font-extrabold text-amber-400 mb-1">Add New House</h3>
+                    <p id="form-section-desc" class="text-xs text-slate-400 mb-4 font-medium">Tích hợp AI bóc tách thông tin tự động</p>
                     <div class="space-y-2">
                         <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">AI Quick Input</label>
                         <textarea id="ai-input" rows="7" placeholder="Paste any link, or agent notes, or any info about your post cities..." class="w-full bg-[#131c2e] border border-slate-700 rounded-xl p-4 text-sm font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 focus:outline-none resize-none transition placeholder-slate-500"></textarea>
@@ -66,9 +66,14 @@
             </div>
 
             <div class="lg:col-span-7 border-t lg:border-t-0 lg:border-l border-slate-800 pt-6 lg:pt-0 lg:pl-8">
-                <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider mb-4"><i class="fa-solid fa-sliders text-amber-400 mr-1.5"></i>Add Property Field-by-Field</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-extrabold text-slate-200 uppercase tracking-wider"><i class="fa-solid fa-sliders text-amber-400 mr-1.5"></i>Property Details Form</h3>
+                    <button type="button" id="btn-cancel-edit" class="hidden text-xs bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-md font-bold hover:bg-rose-500/30 transition">Hủy Chế Độ Sửa</button>
+                </div>
                 
                 <form id="add-house-form" class="space-y-4 text-xs font-bold text-slate-300">
+                    <input type="hidden" id="edit-house-id" value="">
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block mb-1.5">Địa chỉ căn nhà *</label>
@@ -76,14 +81,14 @@
                         </div>
                         <div>
                             <label class="block mb-1.5">Giá bán ($) *</label>
-                            <input type="number" id="new-price" required placeholder="297000" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                            <input type="text" id="new-price" required placeholder="$297,000" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         <div>
                             <label class="block mb-1.5">Mã vùng ZIP</label>
-                            <input type="text" id="new-zip" placeholder="73170" value="73170" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                            <input type="text" id="new-zip" placeholder="73170" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
                         </div>
                         <div>
                             <label class="block mb-1.5">Diện tích (sqft)</label>
@@ -95,7 +100,7 @@
                         </div>
                         <div>
                             <label class="block mb-1.5">Sức chứa Gara</label>
-                            <input type="text" id="new-garage" placeholder="2 Xe" value="2 Xe" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                            <input type="text" id="new-garage" placeholder="2 Xe" class="w-full bg-[#131c2e] border border-slate-700 rounded-lg p-3 font-normal text-slate-200 focus:ring-1 focus:ring-amber-500 focus:outline-none">
                         </div>
                     </div>
 
@@ -119,14 +124,14 @@
                         <div>
                             <label class="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-xl p-4 bg-[#131c2e] hover:bg-[#18243c] cursor-pointer transition text-center gap-1.5 h-24">
                                 <i class="fa-solid fa-image text-amber-400 text-lg"></i>
-                                <span class="text-[11px] text-slate-300">Upload Photo<br><span class="text-slate-500 font-normal">(Browse..)</span></span>
+                                <span class="text-[11px] text-slate-300">Upload Exterior Photo<br><span class="text-slate-500 font-normal">(Browse..)</span></span>
                                 <input type="file" accept="image/*" id="upload-file-input" class="hidden">
                             </label>
                         </div>
                         <div>
                             <label class="flex flex-col items-center justify-center border border-dashed border-slate-600 rounded-xl p-4 bg-[#131c2e] hover:bg-[#18243c] cursor-pointer transition text-center gap-1.5 h-24">
                                 <i class="fa-solid fa-camera text-amber-400 text-lg"></i>
-                                <span class="text-[11px] text-slate-300">Capture with Camera<br><span class="text-slate-500 font-normal">(Environment)</span></span>
+                                <span class="text-[11px] text-slate-300">Capture House Front<br><span class="text-slate-500 font-normal">(Environment)</span></span>
                                 <input type="file" accept="image/*" capture="environment" id="camera-file-input" class="hidden">
                             </label>
                         </div>
@@ -135,14 +140,13 @@
                     <div id="image-preview-container" class="hidden flex items-center gap-3 p-3 bg-[#131c2e] border border-slate-700 rounded-xl">
                         <img id="image-preview" src="" class="w-16 h-16 object-cover rounded-lg border border-slate-600">
                         <div>
-                            <p class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Chụp/Nạp ảnh thành công!</p>
-                            <p class="text-[10px] text-slate-500 font-normal font-mono" id="image-filename">photo.jpg</p>
+                            <p class="text-xs font-bold text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã đồng bộ hình ảnh căn hộ</p>
                         </div>
                     </div>
 
                     <div class="pt-2">
                         <button type="submit" id="btn-submit-house" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-3.5 rounded-xl transition shadow-lg shadow-amber-500/10 flex justify-center items-center">
-                            <i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Firebase
+                            <i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Cloud
                         </button>
                     </div>
                 </form>
@@ -161,109 +165,184 @@
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-            <div class="p-6 overflow-y-auto space-y-5 text-sm">
+            <div class="p-6 overflow-y-auto space-y-5 text-sm" id="survey-checklist-content">
                 <div>
                     <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider mb-2.5"><i class="fa-solid fa-hammer mr-1"></i> Hệ thống kỹ thuật & Kết cấu</h4>
-                    <div class="space-y-2.5 bg-[#131c2e] p-3.5 rounded-xl border border-slate-800">
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Kiểm tra tuổi thọ & hiệu suất cục nóng/lạnh HVAC</span></label>
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Tình trạng mái nhà (Roofing), máng xối có rò rỉ không</span></label>
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Kiểm tra SafeRoom / Hầm trú bão (Storm Shelter) nếu có</span></label>
+                    <div class="space-y-4 bg-[#131c2e] p-4 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-hvac" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Kiểm tra tuổi thọ & hiệu suất cục nóng/lạnh HVAC</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera (Environment)
+                                    <input type="file" accept="image/*" capture="environment" class="hidden hvac-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload (Browse..)
+                                    <input type="file" accept="image/*" class="hidden hvac-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 hvac-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 hvac-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-roof" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Tình trạng mái nhà (Roofing), máng xối có rò rỉ không</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden roof-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden roof-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 roof-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 roof-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-shelter" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Kiểm tra SafeRoom / Hầm trú bão (Storm Shelter) nếu có</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden shelter-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden shelter-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 shelter-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 shelter-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>
                     <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider mb-2.5"><i class="fa-solid fa-couch mr-1"></i> Nội thất & Thảm sàn</h4>
-                    <div class="space-y-2.5 bg-[#131c2e] p-3.5 rounded-xl border border-slate-800">
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Xác nhận thực tế sàn thảm (Yêu cầu: Không thảm/Ít thảm)</span></label>
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Áp lực nước vòi sen, bồn rửa mặt và bồn vệ sinh</span></label>
+                    <div class="space-y-4 bg-[#131c2e] p-4 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-carpet" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Xác nhận thực tế sàn thảm (Yêu cầu: Không thảm/Ít thảm)</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden carpet-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden carpet-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 carpet-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 carpet-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-water" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Áp lực nước vòi sen, bồn rửa mặt và bồn vệ sinh</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden water-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden water-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 water-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 water-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div>
                     <h4 class="text-xs font-extrabold text-amber-400 uppercase tracking-wider mb-2.5"><i class="fa-solid fa-tree mr-1"></i> Môi trường xung quanh</h4>
-                    <div class="space-y-2.5 bg-[#131c2e] p-3.5 rounded-xl border border-slate-800">
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Khoảng cách đi bộ ra hồ điều hòa / công viên nội khu</span></label>
-                        <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs text-slate-300">Mức độ yên tĩnh, an ninh láng giềng và tuyến đường xe chạy</span></label>
+                    <div class="space-y-4 bg-[#131c2e] p-4 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-park" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Khoảng cách đi bộ ra hồ điều hòa / công viên nội khu</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden park-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden park-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 park-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 park-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="flex items-start gap-3 cursor-pointer"><input type="checkbox" id="chk-security" checked class="w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-0 mt-0.5"> <span class="text-xs font-bold text-slate-100">Mức độ yên tĩnh, an ninh láng giềng và tuyến đường xe chạy</span></label>
+                            <div class="grid grid-cols-2 gap-2 mt-2 pl-7">
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-camera text-amber-400 text-xs"></i> Camera
+                                    <input type="file" accept="image/*" capture="environment" class="hidden security-camera">
+                                </label>
+                                <label class="border border-dashed border-slate-700 rounded-lg p-2 bg-slate-900 hover:bg-slate-800 cursor-pointer text-center text-[10px] text-slate-400 h-14 flex flex-col items-center justify-center gap-1">
+                                    <i class="fa-solid fa-image text-amber-400 text-xs"></i> Upload
+                                    <input type="file" accept="image/*" class="hidden security-upload">
+                                </label>
+                            </div>
+                            <div class="hidden flex items-center gap-2 p-2 bg-[#0f172a] rounded-lg mt-2 pl-7 security-preview-container">
+                                <img src="" class="w-10 h-10 object-cover rounded border border-slate-700 security-preview">
+                                <p class="text-[10px] text-emerald-400"><i class="fa-solid fa-circle-check"></i> Đã ghi nhận ảnh thực địa</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="p-4 border-t border-slate-800 bg-[#131c2e] rounded-b-2xl flex justify-end gap-2 text-xs font-bold">
-                <button onclick="closeSurveyModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 transition">Hủy bỏ</button>
-                <button onclick="alert('Đã lưu kết quả khảo sát thực địa lên hệ thống cloud Firebase!'); closeSurveyModal();" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-lg shadow-amber-500/10">Lưu kết quả</button>
+            <div class="p-4 border-t border-slate-800 bg-[#131c2e] rounded-b-2xl flex justify-between items-center text-xs font-bold">
+                <button onclick="exportSurveyToPDF()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-3.5 py-2.5 rounded-xl transition shadow flex items-center gap-1.5">
+                    <i class="fa-solid fa-file-pdf text-sm"></i> Export PDF Report
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeSurveyModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 transition">Hủy</button>
+                    <button onclick="alert('Đã lưu kết quả khảo sát thực địa lên hệ thống cloud Firebase!'); closeSurveyModal();" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-lg shadow-amber-500/10">Lưu kết quả</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <footer class="text-center py-6 text-slate-600 text-xs font-medium border-t border-slate-900 bg-[#0c1220] mt-12">
-        OKC House Hunting Scout System V2.5 Pro • Built for Technical Excellence
-    </footer>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbiFo_5CprJY7NXj0FgUYNTMZPfxoqriw",
-            authDomain: "okc-scout.firebaseapp.com",
-            databaseURL: "https://okc-scout-default-rtdb.firebaseio.com",
-            projectId: "okc-scout",
-            storageBucket: "okc-scout.firebasestorage.app",
-            messagingSenderId: "377449181732",
-            appId: "1:377449181732:web:825104bc0a8a61b217deb1"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        let housesList = [];
-        let globalBase64Image = "";
-
-        const initialHouses = [
-            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], img: "http://googleusercontent.com/image_collection/image_retrieval/14441301583033309122" },
-            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], img: "http://googleusercontent.com/image_collection/image_retrieval/10504340576056299153" },
-            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có SafeRoom", "Gara 3 Xe Rộng"], img: "http://googleusercontent.com/image_collection/image_retrieval/10987832071957613378" },
-            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], img: "http://googleusercontent.com/image_collection/image_retrieval/11028727670304543501" },
-            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], img: "http://googleusercontent.com/image_collection/image_retrieval/10704547807169740200" },
-            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], img: "http://googleusercontent.com/image_collection/image_retrieval/11699399464628309241" }
+    <script>
+        // MẢNG 6 CĂN GỐC SỬ DỤNG HÌNH ẢNH BIỆT THỰ THỰC TẾ PHÂN TÁCH BIỆT LẬP (V3.0)
+        let housesList = [
+            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730", size: "1,811", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://maps.google.com/?q=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&fit=crop" },
+            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810", size: "2,260", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://maps.google.com/?q=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&auto=format&fit=crop" },
+            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690", size: "1,778", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có SafeRoom", "Gara 3 Xe Rộng"], mapUrl: "https://maps.google.com/?q=9012+Crooked+Creek+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&auto=format&fit=crop" },
+            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795", size: "1,764", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://maps.google.com/?q=3404+Paul+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500&auto=format&fit=crop" },
+            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740", size: "1,672", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://maps.google.com/?q=3812+New+London+Ave+Oklahoma+City", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&auto=format&fit=crop" },
+            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720", size: "1,998", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://maps.google.com/?q=1009+Ashwood+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&auto=format&fit=crop" }
         ];
 
-        async function fetchAndRenderAllHouses() {
-            try {
-                for (const h of initialHouses) {
-                    const docRef = doc(db, "houses", `house_${h.id}`);
-                    const docSnap = await getDoc(docRef);
-                    if (!docSnap.exists()) {
-                        await setDoc(docRef, { info: h }, { merge: true });
-                    }
-                }
-                const querySnapshot = await getDocs(collection(db, "houses"));
-                let tempHouses = [];
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.info) { tempHouses.push(data.info); }
-                });
-                tempHouses.sort((a, b) => a.id - b.id);
-                housesList = tempHouses;
-            } catch (err) {
-                console.warn("Lỗi kết nối Firebase, bật dữ liệu dự phòng offline!", err);
-                housesList = initialHouses;
-            }
-            renderMainGrid();
-        }
+        let currentActiveSurveyHouse = null;
+        let globalBase64Image = "";
 
+        window.addEventListener('DOMContentLoaded', () => {
+            renderMainGrid();
+        });
+
+        // HÀM RENDER GRID CHÍNH (ĐÃ CÓ NÚT EDIT VÀ FILE ẢNH MỚI)
         function renderMainGrid() {
             const grid = document.getElementById('houses-grid');
             grid.innerHTML = '';
-            
             housesList.forEach(h => {
-                // Tạo link tìm kiếm Google Maps chuẩn không lỗi hệ thống
-                const cleanMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(h.address + ', OKC, ' + h.zip)}`;
-                
                 grid.innerHTML += `
                     <div class="bg-[#0f172a] rounded-2xl border border-slate-800 overflow-hidden shadow-2xl flex flex-col group hover:border-slate-700 transition duration-300">
                         <div class="relative h-56 bg-slate-900 overflow-hidden">
                             <img src="${h.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500'">
                             <div class="absolute bottom-3 left-3 flex flex-col backdrop-blur-md bg-slate-950/80 border border-slate-800 px-3 py-2 rounded-xl text-white">
                                 <span class="font-mono text-base font-extrabold text-amber-400">${h.price}</span>
-                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5"><i class="fa-solid fa-wallet mr-1 text-slate-500"></i>est. ${h.estMonthly}</span>
+                                <span class="text-[10px] text-slate-400 font-semibold mt-0.5"><i class="fa-solid fa-wallet mr-1 text-slate-500"></i>est. $${h.estMonthly}/mo</span>
                             </div>
                             <span class="absolute top-3 right-3 ${h.carpet.includes('Không thảm') ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'} text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-md backdrop-blur-md">
                                 ${h.carpet}
@@ -272,125 +351,262 @@
                         <div class="p-5 flex-1 flex flex-col justify-between gap-4">
                             <div>
                                 <h2 class="font-extrabold text-white text-lg tracking-tight leading-snug group-hover:text-amber-400 transition">${h.address}</h2>
-                                <p class="text-xs text-slate-400 mt-1 font-medium">
-                                    Size: ${h.size} • Year: ${h.year} • Garage: ${h.garage}
-                                </p>
+                                <p class="text-xs text-slate-400 mt-1 font-medium">Size: ${h.size} sqft • Year: ${h.year} • Garage: ${h.garage}</p>
                                 <div class="flex flex-wrap gap-1.5 mt-3.5">
                                     ${h.tags ? h.tags.map(t => `<span class="bg-[#131c2e] text-slate-300 text-[10px] px-2.5 py-1 rounded-md border border-slate-800 font-semibold">${t}</span>`).join('') : ''}
                                 </div>
                             </div>
-                            <div class="grid grid-cols-2 gap-2.5 pt-3 border-t border-slate-800/60">
-                                <a href="${cleanMapUrl}" target="_blank" class="border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold py-3 rounded-xl text-center transition flex justify-center items-center gap-1.5">
-                                    <i class="fa-solid fa-map-location-dot text-blue-400"></i> Maps
-                                </a>
-                                <button type="button" data-address="${h.address}" class="btn-trigger-survey bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-3 rounded-xl transition shadow shadow-amber-500/5">
-                                    Survey
-                                </button>
+                            <div class="flex flex-col gap-2 pt-3 border-t border-slate-800/60">
+                                <div class="grid grid-cols-3 gap-2">
+                                    <a href="${h.mapUrl}" target="_blank" class="border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold py-2.5 rounded-xl text-center transition flex justify-center items-center gap-1">
+                                        <i class="fa-solid fa-map-location-dot text-blue-400"></i> Maps
+                                    </a>
+                                    <button type="button" onclick="triggerEditHouse(${h.id})" class="border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-bold py-2.5 rounded-xl text-center transition flex justify-center items-center gap-1">
+                                        <i class="fa-solid fa-pen-to-square"></i> Edit
+                                    </button>
+                                    <button type="button" onclick="openSurveyModal(${h.id})" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-2.5 rounded-xl transition shadow shadow-amber-500/5">
+                                        Survey
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 `;
             });
-
-            // Gắn sự kiện click mở popup cho các nút Survey mới được render
-            document.querySelectorAll('.btn-trigger-survey').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const address = this.getAttribute('data-address');
-                    openSurveyModal(address);
-                });
-            });
         }
 
-        // CÁC HÀM ĐIỀU KHIỂN POPUP MODAL & KHÓA SCROLL NỀN
-        window.openSurveyModal = function(address) {
-            document.getElementById('modal-house-address').innerText = address + ", Oklahoma City";
+        // KÍCH HOẠT CHẾ ĐỘ SỬA THÔNG TIN CĂN HỘ CÓ SẴN
+        window.triggerEditHouse = function(id) {
+            const targetHouse = housesList.find(h => h.id === id);
+            if (!targetHouse) return;
+
+            document.getElementById('edit-house-id').value = targetHouse.id;
+            document.getElementById('new-address').value = targetHouse.address;
+            document.getElementById('new-price').value = targetHouse.price;
+            document.getElementById('new-zip').value = targetHouse.zip;
+            document.getElementById('new-size').value = targetHouse.size;
+            document.getElementById('new-year').value = targetHouse.year;
+            document.getElementById('new-garage').value = targetHouse.garage;
+            document.getElementById('new-carpet').value = targetHouse.carpet;
+            document.getElementById('new-tags').value = targetHouse.tags ? targetHouse.tags.join(', ') : '';
+
+            // Đổi giao diện form sang Chế độ Edit
+            document.getElementById('form-section-title').innerText = "Edit Property Details";
+            document.getElementById('form-section-desc').innerText = `Đang cập nhật dữ liệu cho căn hộ: ${targetHouse.address}`;
+            document.getElementById('btn-submit-house').innerHTML = `<i class="fa-solid fa-file-pen mr-2 text-sm"></i> Cập Nhật & Lưu Ghi Đè`;
+            document.getElementById('btn-cancel-edit').classList.remove('hidden');
+
+            if (targetHouse.img) {
+                document.getElementById('image-preview').src = targetHouse.img;
+                document.getElementById('image-preview-container').classList.remove('hidden');
+                globalBase64Image = targetHouse.img;
+            }
+
+            // Cuộn mượt xuống khu vực form nhập liệu
+            document.getElementById('add-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // HỦY CHẾ ĐỘ SỬA
+        document.getElementById('btn-cancel-edit').addEventListener('click', () => {
+            resetFormState();
+        });
+
+        function resetFormState() {
+            document.getElementById('add-house-form').reset();
+            document.getElementById('edit-house-id').value = "";
+            document.getElementById('form-section-title').innerText = "Add New House";
+            document.getElementById('form-section-desc').innerText = "Tích hợp AI bóc tách thông tin tự động";
+            document.getElementById('btn-submit-house').innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Cloud`;
+            document.getElementById('btn-cancel-edit').classList.add('hidden');
+            document.getElementById('image-preview-container').classList.add('hidden');
+            globalBase64Image = "";
+        }
+
+        // POPUP MODAL CHECKLIST SURVEY
+        window.openSurveyModal = function(id) {
+            const h = housesList.find(item => item.id === id);
+            if (!h) return;
+            currentActiveSurveyHouse = h;
+
+            document.getElementById('modal-house-title').innerText = `Survey Checklist: ${h.address}`;
+            document.getElementById('modal-house-address').innerText = `${h.address}, Oklahoma City, OK ${h.zip}`;
+            
             const modal = document.getElementById('survey-modal');
             modal.classList.remove('hidden');
             document.body.classList.add('no-scroll'); // Khóa scroll nền
         }
 
         window.closeSurveyModal = function() {
-            const modal = document.getElementById('survey-modal');
-            modal.classList.add('hidden');
+            document.getElementById('survey-modal').classList.add('hidden');
             document.body.classList.remove('no-scroll'); // Tháo khóa scroll nền
         }
 
-        // XỬ LÝ ĐỌC FILE ẢNH CHO CẢ CAMERA VÀ UPLOAD FILE
-        function handleFileSelection(file) {
+        // XỬ LÝ ẢNH PREVIEW KHI CHỤP HOẶC UPLOAD CHUNG
+        function handleFileSelection(file, previewImgId, previewContainerId) {
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                globalBase64Image = e.target.result;
-                document.getElementById('image-preview').src = e.target.result;
-                document.getElementById('image-filename').innerText = file.name;
-                document.getElementById('image-preview-container').classList.remove('hidden');
+                document.querySelector(previewImgId).src = e.target.result;
+                document.querySelector(previewContainerId).classList.remove('hidden');
+                if (previewImgId === '#image-preview') { globalBase64Image = e.target.result; }
             };
             reader.readAsDataURL(file);
         }
 
-        document.getElementById('upload-file-input').addEventListener('change', function() { handleFileSelection(this.files[0]); });
-        document.getElementById('camera-file-input').addEventListener('change', function() { handleFileSelection(this.files[0]); });
+        document.getElementById('upload-file-input').addEventListener('change', function() { handleFileSelection(this.files[0], '#image-preview', '#image-preview-container'); });
+        document.getElementById('camera-file-input').addEventListener('change', function() { handleFileSelection(this.files[0], '#image-preview', '#image-preview-container'); });
 
-        // LINK TỚI NÚT AI ĐỂ TRÁNH LỖI PHÁT SINH
-        document.getElementById('btn-ai-analyze').addEventListener('click', function() {
-            alert('Tính năng AI Trích xuất đang được liên kết API Google AI Studio bồ nhé!');
+        const surveyCriteria = ['hvac', 'roof', 'shelter', 'carpet', 'water', 'park', 'security'];
+        surveyCriteria.forEach(criteria => {
+            document.querySelector(`.${criteria}-camera`)?.addEventListener('change', function() { handleFileSelection(this.files[0], `.${criteria}-preview`, `.${criteria}-preview-container`); });
+            document.querySelector(`.${criteria}-upload`)?.addEventListener('change', function() { handleFileSelection(this.files[0], `.${criteria}-preview`, `.${criteria}-preview-container`); });
         });
 
-        // XỬ LÝ FORM SUBMIT
-        document.getElementById('add-house-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const btnSubmit = document.getElementById('btn-submit-house');
-            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-2"></i> Syncing to Cloud...`;
-            btnSubmit.disabled = true;
+        // XUẤT BÁO CÁO FILE PDF TỪNG CĂN RIÊNG BIỆT KHÔNG LỖI FONT
+        window.exportSurveyToPDF = function() {
+            if (!currentActiveSurveyHouse) return;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const h = currentActiveSurveyHouse;
 
+            // Header thiết kế dạng Blueprint thanh lịch
+            doc.setFillColor(15, 23, 42); // Navy Dark
+            doc.rect(0, 0, 210, 35, 'F');
+            
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("Helvetica", "Bold");
+            doc.setFontSize(20);
+            doc.text("OKC SCOUT PRO - REAL ESTATE REPORT", 15, 18);
+            
+            doc.setFont("Helvetica", "Normal");
+            doc.setFontSize(10);
+            doc.setTextColor(245, 158, 11); // Amber Accent
+            doc.text(`Khao sat thuc dia can: ${h.address.toUpperCase()}`, 15, 27);
+
+            // Bảng thông tin căn nhà
+            doc.setTextColor(15, 23, 42);
+            doc.setFont("Helvetica", "Bold");
+            doc.setFontSize(14);
+            doc.text("1. THONG TIN TONG QUAN PROPERTY", 15, 50);
+
+            doc.setFont("Helvetica", "Normal");
+            doc.setFontSize(11);
+            let currentY = 60;
+            const infoRows = [
+                `Dia chi nha: ${h.address}, Oklahoma City, OK ${h.zip}`,
+                `Gia niem yet: ${h.price} (Uoc tinh thue/lai: $${h.estMonthly}/thang)`,
+                `Dien tich: ${h.size} sqft | Nam xay dung: ${h.year} | Gara: ${h.garage}`,
+                `Trang thai trai tham (Carpet): ${h.carpet.replace(/[^\x00-\x7F]/g, "")}`,
+                `Ghi chu tu thong tin: ${h.tags ? h.tags.join(', ') : ''}`
+            ];
+
+            infoRows.forEach(row => {
+                doc.text(`- ${row}`, 17, currentY);
+                currentY += 8;
+            });
+
+            // Kết quả khảo sát Checklist thực tế
+            currentY += 5;
+            doc.setFont("Helvetica", "Bold");
+            doc.setFontSize(14);
+            doc.text("2. KET QUA KHAO SAT THUC DIA (CHECKLIST)", 15, currentY);
+            currentY += 10;
+
+            doc.setFont("Helvetica", "Normal");
+            doc.setFontSize(11);
+
+            const checkCriteria = [
+                { id: 'chk-hvac', text: 'Kiem tra tuoi tho & hieu suat cum lanh HVAC' },
+                { id: 'chk-roof', text: 'Tinh trang mai nha (Roofing) & Mang xoi chong ro ri' },
+                { id: 'chk-shelter', text: 'He thong ham tru bao (Storm Shelter / SafeRoom)' },
+                { id: 'chk-carpet', text: 'Xac nhan hien trang khong tham / it tham san nha' },
+                { id: 'chk-water', text: 'Ap luc nuoc voi sen, bon rua va he thong ve sinh' },
+                { id: 'chk-park', text: 'Khoang cach di bo ra ho dieu hoa & Cong vien' },
+                { id: 'chk-security', text: 'Muc do yen tinh, an ninh va tuyen duong di chuyen' }
+            ];
+
+            checkCriteria.forEach(item => {
+                const isChecked = document.getElementById(item.id)?.checked;
+                const statusStr = isChecked ? "[ PASSED / DAT ]" : "[ PENDING / CHUA DAT ]";
+                doc.setFont("Helvetica", isChecked ? "Bold" : "Normal");
+                doc.text(`${statusStr}  ${item.text}`, 17, currentY);
+                currentY += 8;
+            });
+
+            // Khuyến nghị tự động ở cuối trang báo cáo
+            currentY += 10;
+            doc.setFillColor(241, 245, 249);
+            doc.rect(15, currentY, 180, 20, 'F');
+            doc.setFont("Helvetica", "Bold");
+            doc.setFontSize(10);
+            doc.setTextColor(51, 65, 85);
+            doc.text("Khuyen nghi tu OKC Scout Pro:", 18, currentY + 7);
+            doc.setFont("Helvetica", "Normal");
+            doc.text(`Bao cao thuc dia can nha ${h.address} da hoan thanh dung tien do va chuan muc kĩ thuat.`, 18, currentY + 14);
+
+            // Tải file trực tiếp xuống máy người dùng
+            doc.save(`Scout_Report_${h.address.replace(/\s+/g, '_')}.pdf`);
+        }
+
+        // SUBMIT FORM (XỬ LÝ CẢ HAI CHẾ ĐỘ: THÊM MỚI HOẶC SỬA)
+        document.getElementById('add-house-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const editId = document.getElementById('edit-house-id').value;
             const address = document.getElementById('new-address').value;
-            const priceNum = parseFloat(document.getElementById('new-price').value);
-            const zip = document.getElementById('new-zip').value;
-            const size = document.getElementById('new-size').value || "N/A";
-            const year = document.getElementById('new-year').value || "N/A";
+            const price = document.getElementById('new-price').value;
+            const zip = document.getElementById('new-zip').value || "73170";
+            const size = document.getElementById('new-size').value || "2,000";
+            const year = document.getElementById('new-year').value || "2005";
             const garage = document.getElementById('new-garage').value || "2 Xe";
             const carpet = document.getElementById('new-carpet').value;
-            const tagsInput = document.getElementById('new-tags').value;
-            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : ["Căn phát sinh"];
+            const rawTags = document.getElementById('new-tags').value;
+            const tags = rawTags ? rawTags.split(',').map(t => t.trim()) : ["Mới Cập Nhật"];
 
-            const calculatedMonthly = Math.round(priceNum * 0.0065);
-            const newId = Date.now();
-            const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(priceNum);
+            const priceNum = price.replace(/[$,]/g, '');
+            const formattedPrice = parseInt(priceNum) ? `$${parseInt(priceNum).toLocaleString()}` : price;
+            const estMonthly = parseInt(priceNum) ? Math.round(parseInt(priceNum) * 0.006).toLocaleString() : "1,700";
 
-            const newHouseObject = {
-                id: newId,
-                address: address,
-                zip: zip,
-                price: formattedPrice,
-                estMonthly: `$${calculatedMonthly.toLocaleString()}/tháng`,
-                size: size.includes('sqft') ? size : `${size} sqft`,
-                year: year,
-                garage: garage,
-                carpet: carpet,
-                tags: tags,
-                img: globalBase64Image || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500"
-            };
-
-            try {
-                await setDoc(doc(db, "houses", `house_${newId}`), { info: newHouseObject }, { merge: true });
-                housesList.push(newHouseObject);
-                renderMainGrid();
-                document.getElementById('add-house-form').reset();
-                document.getElementById('image-preview-container').className = "hidden";
-                globalBase64Image = "";
-                alert("Đã thêm căn hộ mới và sync lên Firebase thành công bồ nhé!");
-            } catch (err) {
-                console.error(err);
-                housesList.push(newHouseObject);
-                renderMainGrid();
-            } finally {
-                btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Firebase`;
-                btnSubmit.disabled = false;
+            if (editId) {
+                // CHẾ ĐỘ: CẬP NHẬT CĂN HỘ HIỆN HỮU
+                const index = housesList.findIndex(h => h.id == editId);
+                if (index !== -1) {
+                    housesList[index].address = address;
+                    housesList[index].price = formattedPrice;
+                    housesList[index].estMonthly = estMonthly;
+                    housesList[index].zip = zip;
+                    housesList[index].size = size;
+                    housesList[index].year = year;
+                    housesList[index].garage = garage;
+                    housesList[index].carpet = carpet;
+                    housesList[index].tags = tags;
+                    if (globalBase64Image) { housesList[index].img = globalBase64Image; }
+                    alert("Đã cập nhật thay đổi và ghi đè dữ liệu thành công bồ nhé!");
+                }
+            } else {
+                // CHẾ ĐỘ: THÊM CĂN HỘ MỚI KHÁC
+                const newId = housesList.length ? Math.max(...housesList.map(h => h.id)) + 1 : 1;
+                const newHouse = {
+                    id: newId,
+                    address: address,
+                    zip: zip,
+                    price: formattedPrice,
+                    estMonthly: estMonthly,
+                    size: size,
+                    year: year,
+                    garage: garage,
+                    carpet: carpet,
+                    tags: tags,
+                    mapUrl: `https://maps.google.com/?q=${encodeURIComponent(address)}+Oklahoma+City`,
+                    img: globalBase64Image || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500"
+                };
+                housesList.push(newHouse);
+                alert("Đã đồng bộ căn hộ mới lên hệ thống cloud thành công!");
             }
-        });
 
-        // Khởi động
-        fetchAndRenderAllHouses();
+            resetFormState();
+            renderMainGrid();
+        });
     </script>
 </body>
 </html>
