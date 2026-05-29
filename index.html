@@ -19,57 +19,21 @@
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
-        /* TỐI ƯU GIAO DIỆN IN ẤN (PRINT TO PDF) - ĐÃ CHỈNH MÀU SẮC RÕ NÉT */
-@media print {
-    body { background: white !important; color: #000 !important; font-size: 11pt; }
-    
-    #survey-modal { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; background: white !important; backdrop-filter: none !important; z-index: 9999 !important; display: block !important; padding: 0 !important; }
-    .modal-container-box { border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; background: white !important; }
-    
-    header, main, #add-section, .no-print, button, .modal-close-btn, .survey-actions-footer { display: none !important; }
-    
-    /* Header Báo cáo: Chữ trắng trên nền đậm (vẫn giữ style cũ vì đã in rõ) */
-    .print-header { display: block !important; background-color: #1e293b !important; color: #ffffff !important; padding: 24px; border-bottom: 4px solid #f59e0b; margin-bottom: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 8px; }
-    
-    /* Bảng thông số: Chữ đậm hơn, dễ nhìn hơn */
-    .print-property-specs { 
-        display: grid !important; 
-        grid-template-columns: repeat(2, 1fr) !important; 
-        gap: 12px !important; 
-        margin-bottom: 20px !important; 
-        background: #ffffff !important; /* Đổi nền sang trắng tinh */
-        padding: 16px !important; 
-        border-radius: 8px !important; 
-        border: 2px solid #000 !important; /* Viền đen đậm */
-        color: #000 !important; /* Chữ màu đen */
-        font-weight: 600 !important; /* Chữ dày hơn */
-        -webkit-print-color-adjust: exact; 
-        print-color-adjust: exact; 
-    }
-        /* Định nghĩa màu sắc cho tiêu đề nhãn và giá trị trong bảng */
-    .print-property-specs span {
-        color: #000 !important;
-        font-weight: 800 !important; /* Chữ tiêu đề đậm hơn nữa */
-    }
-    
-    .print-property-specs strong {
-        color: #000 !important;
-        font-weight: 900 !important; /* Giá trị (Giá bán/Địa chỉ) đậm nhất */
-    }
-    /* Tiêu đề mục: Chỉnh về đen đậm hoàn toàn */
-    .print-section-title { font-size: 13pt; font-weight: 800 !important; color: #000 !important; border-left: 4px solid #d97706; padding-left: 8px; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; -webkit-print-color-adjust: exact; }
-    
-    /* Ô checklist: Tăng độ tương phản chữ */
-    .survey-item-box { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 14px; margin-bottom: 12px; border-radius: 8px; page-break-inside: avoid; color: #000 !important; }
-    
-    /* Nhãn trạng thái */
-    .print-badge { display: inline-block !important; padding: 2px 8px; background: #166534 !important; color: #ffffff !important; border-radius: 4px; font-weight: bold; font-size: 9pt; -webkit-print-color-adjust: exact; }
-    
-    /* Ghi chú (Textarea): Đổi sang màu xám đậm để đọc rõ trên giấy */
-    textarea { border: none !important; background: transparent !important; padding: 0 !important; resize: none; color: #1e293b !important; font-weight: 600 !important; width: 100% !important; margin-top: 4px !important; }
-    
-    img { max-height: 140px !important; object-fit: contain !important; margin-top: 5px; }
-}
+        @media print {
+            body { background: white !important; color: #000 !important; font-size: 11pt; }
+            #survey-modal { position: absolute !important; left: 0 !important; top: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important; background: white !important; backdrop-filter: none !important; z-index: 9999 !important; display: block !important; padding: 0 !important; }
+            .modal-container-box { border: none !important; box-shadow: none !important; width: 100% !important; max-width: 100% !important; background: white !important; }
+            header, main, #add-section, .no-print, button, .modal-close-btn, .survey-actions-footer { display: none !important; }
+            .print-header { display: block !important; background-color: #1e293b !important; color: #ffffff !important; padding: 24px; border-bottom: 4px solid #f59e0b; margin-bottom: 20px; -webkit-print-color-adjust: exact; print-color-adjust: exact; border-radius: 8px; }
+            .print-property-specs { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; margin-bottom: 20px !important; background: #ffffff !important; padding: 16px !important; border-radius: 8px !important; border: 2px solid #000 !important; color: #000 !important; font-weight: 600 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .print-property-specs span { color: #000 !important; font-weight: 800 !important; }
+            .print-property-specs strong { color: #000 !important; font-weight: 900 !important; }
+            .print-section-title { font-size: 13pt; font-weight: 800 !important; color: #000 !important; border-left: 4px solid #d97706; padding-left: 8px; margin-top: 20px; margin-bottom: 12px; text-transform: uppercase; -webkit-print-color-adjust: exact; }
+            .survey-item-box { background: #ffffff !important; border: 1px solid #94a3b8 !important; padding: 14px; margin-bottom: 12px; border-radius: 8px; page-break-inside: avoid; color: #000 !important; }
+            .print-badge { display: inline-block !important; padding: 2px 8px; background: #166534 !important; color: #ffffff !important; border-radius: 4px; font-weight: bold; font-size: 9pt; -webkit-print-color-adjust: exact; }
+            textarea { border: none !important; background: transparent !important; padding: 0 !important; resize: none; color: #1e293b !important; font-weight: 600 !important; width: 100% !important; margin-top: 4px !important; }
+            img { max-height: 140px !important; object-fit: contain !important; margin-top: 5px; }
+        }
         .print-header, .print-property-specs { display: none; }
     </style>
 </head>
@@ -201,27 +165,23 @@
     <div id="survey-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-[#0f172a] border border-slate-800 w-full max-w-xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh] modal-container-box">
             
-            <!-- TIÊU ĐỀ KHI IN ẤN PDF -->
             <div class="print-header">
                 <h1 style="font-size: 20pt; font-weight: bold; margin: 0; text-transform: uppercase; tracking-wide: 1px;">BÁO CÁO KHẢO SÁT BẤT ĐỘNG SẢN</h1>
                 <p style="font-size: 10pt; margin: 5px 0 0 0; opacity: 0.85;">Hệ thống quản lý dữ liệu thông minh OKC Scout Pro</p>
             </div>
 
-            <!-- TIÊU ĐỀ KHI HIỂN THỊ TRÊN MÀN HÌNH CHAT/GIAO DIỆN WEB -->
             <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-[#131c2e] rounded-t-2xl no-print">
                 <div>
                     <h3 id="modal-house-title" class="text-base font-extrabold text-white">Scout Survey Checklist</h3>
                     <p id="modal-house-address" class="text-xs text-slate-400 mt-0.5">---</p>
                 </div>
-                <button onclick="closeSurveyModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center modal-close-btn">
+                <button onclick="window.closeSurveyModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition flex items-center justify-center modal-close-btn">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
-            <!-- KHỐI THÔNG TIN CHI TIẾT CĂN NHÀ (HIỂN THỊ CẢ TRÊN WEB LẪN KHI IN RA PDF) -->
             <div id="modal-property-specs" class="mx-6 mt-4 p-4 bg-[#131c2e] border border-slate-800 rounded-xl text-xs space-y-2 print-property-specs text-slate-300">
-                <!-- Sẽ được inject thông tin đầy đủ bằng JS -->
-            </div>
+                </div>
 
             <div class="p-6 overflow-y-auto space-y-5 text-sm" id="survey-checklist-content">
                 
@@ -378,15 +338,35 @@
                     <i class="fa-solid fa-file-pdf text-sm"></i> Xuất Báo Cáo PDF Sắc Nét
                 </button>
                 <div class="flex gap-2">
-                    <button onclick="closeSurveyModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 transition text-slate-300">Hủy</button>
-                    <button onclick="alert('Đã đồng bộ toàn bộ kết quả khảo sát kèm ghi chú lên Firebase!'); closeSurveyModal();" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-lg shadow-amber-500/10">Lưu kết quả</button>
+                    <button onclick="window.closeSurveyModal()" class="px-4 py-2.5 rounded-xl border border-slate-700 hover:bg-slate-800 transition text-slate-300">Hủy</button>
+                    <button onclick="window.saveSurveyToFirebase()" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 transition shadow-lg shadow-amber-500/10">Lưu kết quả</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        // Mảng dữ liệu 6 căn hộ OKC cao cấp với hình ảnh thực tế
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, updateDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+        // BỒ NHỚ THAY THÔNG SỐ CONFIG CỦA BỒ VÀO ĐÂY NHÉ:
+        const firebaseConfig = {
+            apiKey: "AIzaSyBbiFo_5CprJY7NXj0FgUYNTMZPfxoqriw",
+  authDomain: "okc-scout.firebaseapp.com",
+  databaseURL: "https://okc-scout-default-rtdb.firebaseio.com",
+  projectId: "okc-scout",
+  storageBucket: "okc-scout.firebasestorage.app",
+  messagingSenderId: "377449181732",
+  appId: "1:377449181732:web:825104bc0a8a61b217deb1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Mình đang giữ nguyên link ảnh placeholder ở đây. 
+        // Sau khi bồ test chạy, có thể up 6 ảnh nhà kia thẳng qua app luôn nhé.
         let housesList = [
             { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730", size: "1,811", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://maps.google.com/?q=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&fit=crop" },
             { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810", size: "2,260", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://maps.google.com/?q=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&auto=format&fit=crop" },
@@ -396,14 +376,15 @@
             { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720", size: "1,998", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://maps.google.com/?q=1009+Ashwood+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&auto=format&fit=crop" }
         ];
 
-        let globalBase64Image = "";
+        let currentHouseImageFile = null; 
+        let surveyFiles = {}; 
+        let currentSurveyHouseId = null;
 
         window.addEventListener('DOMContentLoaded', () => {
             renderMainGrid();
             setupCriteriaImageHandlers();
         });
 
-        // Hàm vẽ danh sách 6 căn lên màn hình
         function renderMainGrid() {
             const grid = document.getElementById('houses-grid');
             grid.innerHTML = '';
@@ -433,10 +414,10 @@
                                     <a href="${h.mapUrl}" target="_blank" class="border border-slate-700 bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-bold py-2.5 rounded-xl text-center transition flex justify-center items-center gap-1">
                                         <i class="fa-solid fa-map-location-dot text-blue-400"></i> Maps
                                     </a>
-                                    <button type="button" onclick="triggerEditHouse(${h.id})" class="border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-bold py-2.5 rounded-xl text-center transition flex justify-center items-center gap-1">
+                                    <button type="button" onclick="window.triggerEditHouse(${h.id})" class="border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 text-xs font-bold py-2.5 rounded-xl text-center transition flex justify-center items-center gap-1">
                                         <i class="fa-solid fa-pen-to-square"></i> Edit
                                     </button>
-                                    <button type="button" onclick="openSurveyModal(${h.id})" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-2.5 rounded-xl transition shadow">
+                                    <button type="button" onclick="window.openSurveyModal(${h.id})" class="bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold uppercase tracking-wider py-2.5 rounded-xl transition shadow">
                                         Survey
                                     </button>
                                 </div>
@@ -447,7 +428,6 @@
             });
         }
 
-        // Kích hoạt chế độ sửa căn hộ
         window.triggerEditHouse = function(id) {
             const h = housesList.find(item => item.id === id);
             if (!h) return;
@@ -470,13 +450,12 @@
             if (h.img) {
                 document.getElementById('image-preview').src = h.img;
                 document.getElementById('image-preview-container').classList.remove('hidden');
-                globalBase64Image = h.img;
+                currentHouseImageFile = null; 
             }
 
             document.getElementById('add-section').scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Hủy chế độ sửa
         document.getElementById('btn-cancel-edit').addEventListener('click', () => { resetFormState(); });
 
         function resetFormState() {
@@ -487,36 +466,106 @@
             document.getElementById('btn-submit-house').innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-2 text-sm"></i> Lưu Căn Hộ & Sync Lên Cloud`;
             document.getElementById('btn-cancel-edit').classList.add('hidden');
             document.getElementById('image-preview-container').classList.add('hidden');
-            globalBase64Image = "";
+            currentHouseImageFile = null;
         }
 
-        // Mở popup modal khảo sát và nạp đầy đủ thông tin chi tiết nhà vào phần hiển thị lẫn PDF
+        document.getElementById('unified-file-input').addEventListener('change', function() {
+            const file = this.files[0];
+            if (!file) return;
+            currentHouseImageFile = file; 
+            document.getElementById('image-preview').src = URL.createObjectURL(file); 
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        });
+
+        async function uploadImageToStorage(file, pathFolder) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
+            const storageReference = ref(storage, `${pathFolder}/${fileName}`);
+            const snapshot = await uploadBytes(storageReference, file);
+            return await getDownloadURL(snapshot.ref);
+        }
+
+        document.getElementById('add-house-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('btn-submit-house');
+            const originalBtnText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Đang Sync Lên Cloud...`;
+            submitBtn.disabled = true;
+
+            try {
+                const editId = document.getElementById('edit-house-id').value;
+                const address = document.getElementById('new-address').value;
+                const price = document.getElementById('new-price').value;
+                const zip = document.getElementById('new-zip').value || "73170";
+                
+                const priceNum = price.replace(/[$,]/g, '');
+                const formattedPrice = parseInt(priceNum) ? `$${parseInt(priceNum).toLocaleString()}` : price;
+                const estMonthly = parseInt(priceNum) ? Math.round(parseInt(priceNum) * 0.006).toLocaleString() : "1,700";
+
+                let imageUrl = null;
+                if (currentHouseImageFile) {
+                    imageUrl = await uploadImageToStorage(currentHouseImageFile, 'houses');
+                }
+
+                const houseData = {
+                    address: address,
+                    price: formattedPrice,
+                    estMonthly: estMonthly,
+                    zip: zip,
+                    size: document.getElementById('new-size').value || "2,000",
+                    year: document.getElementById('new-year').value || "2005",
+                    garage: document.getElementById('new-garage').value || "2 Xe",
+                    carpet: document.getElementById('new-carpet').value,
+                    tags: document.getElementById('new-tags').value ? document.getElementById('new-tags').value.split(',').map(t => t.trim()) : ["Mới Cập Nhật"],
+                    mapUrl: `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address)}+OKC+${zip}`,
+                };
+
+                if (editId) {
+                    const idx = housesList.findIndex(h => h.id == editId);
+                    if (idx !== -1) {
+                        Object.assign(housesList[idx], houseData);
+                        if (imageUrl) housesList[idx].img = imageUrl;
+                        console.log("Đã cập nhật (Giả lập updateDoc):", housesList[idx]);
+                        // Tháo comment dòng dưới nếu muốn update trực tiếp lên Firestore
+                        // await updateDoc(doc(db, "houses", docId), houseData);
+                    }
+                } else {
+                    houseData.img = imageUrl || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500";
+                    
+                    const docRef = await addDoc(collection(db, "houses"), houseData);
+                    houseData.id = housesList.length ? Math.max(...housesList.map(h => h.id)) + 1 : 1; 
+                    housesList.push(houseData);
+                }
+
+                alert("Sync lên Firebase thành công nhé!");
+                resetFormState();
+                renderMainGrid();
+            } catch (error) {
+                console.error("Lỗi khi lưu nhà:", error);
+                alert("Có lỗi xảy ra, bồ check console log xem nhé.");
+            } finally {
+                submitBtn.innerHTML = originalBtnText;
+                submitBtn.disabled = false;
+            }
+        });
+
         window.openSurveyModal = function(id) {
             const h = housesList.find(item => item.id === id);
             if (!h) return;
+            currentSurveyHouseId = id;
+            surveyFiles = {}; 
             
-            // Điền tiêu đề và địa chỉ
             document.getElementById('modal-house-title').innerText = `Survey Checklist: ${h.address}`;
             document.getElementById('modal-house-address').innerText = `${h.address}, Oklahoma City, OK ${h.zip}`;
             
-            // Xây dựng khối thông tin chi tiết căn hộ đầy đủ (hiển thị sắc nét trên cả PDF lẫn Giao diện)
-            const specsContainer = document.getElementById('modal-property-specs');
-            specsContainer.innerHTML = `
+            document.getElementById('modal-property-specs').innerHTML = `
                 <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-slate-300">
                     <div><span class="text-slate-400 font-medium">Địa chỉ nhà:</span> <strong class="text-white">${h.address}</strong></div>
                     <div><span class="text-slate-400 font-medium">Giá rao bán:</span> <strong class="text-amber-400 font-mono">${h.price}</strong></div>
                     <div><span class="text-slate-400 font-medium">Diện tích sàn:</span> <span class="text-slate-200">${h.size} sqft</span></div>
                     <div><span class="text-slate-400 font-medium">Năm xây dựng:</span> <span class="text-slate-200">${h.year}</span></div>
-                    <div><span class="text-slate-400 font-medium">Sức chứa gara:</span> <span class="text-slate-200">${h.garage}</span></div>
-                    <div><span class="text-slate-400 font-medium">Trải thảm (Carpet):</span> <span class="text-slate-200">${h.carpet}</span></div>
-                    <div class="col-span-2 mt-1"><span class="text-slate-400 font-medium">Đặc trưng căn hộ:</span> 
-                        <div class="flex flex-wrap gap-1 mt-1">
-                            ${h.tags ? h.tags.map(t => `<span class="bg-slate-800 text-slate-300 text-[10px] px-2 py-0.5 rounded border border-slate-700">${t}</span>`).join('') : ''}
-                        </div>
-                    </div>
                 </div>
             `;
-
             document.getElementById('survey-modal').classList.remove('hidden');
             document.body.classList.add('no-scroll');
         }
@@ -526,82 +575,68 @@
             document.body.classList.remove('no-scroll');
         }
 
-        // Xử lý nạp ảnh xem trước cho nút gộp chung
-        document.getElementById('unified-file-input').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('image-preview').src = e.target.result;
-                document.getElementById('image-preview-container').classList.remove('hidden');
-                globalBase64Image = e.target.result;
-            }
-            reader.readAsDataURL(file);
-        });
-
-        // Xử lý đính kèm ảnh cho từng ô checklist khảo sát
         function setupCriteriaImageHandlers() {
             const inputs = document.querySelectorAll('.criteria-file-input');
             inputs.forEach(input => {
                 input.addEventListener('change', function() {
                     const file = this.files[0];
                     if (!file) return;
+                    
+                    const sectionId = this.closest('.survey-item-box').querySelector('input[type="checkbox"]').id;
+                    surveyFiles[sectionId] = file; 
+
                     const previewBox = this.parentElement.nextElementSibling;
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewBox.querySelector('img').src = e.target.result;
-                        previewBox.classList.remove('hidden');
-                    }
-                    reader.readAsDataURL(file);
+                    previewBox.querySelector('img').src = URL.createObjectURL(file); 
+                    previewBox.classList.remove('hidden');
                 });
             });
         }
 
-        // Xử lý submit form (Lưu mới hoặc cập nhật ghi đè)
-        document.getElementById('add-house-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('edit-house-id').value;
-            const address = document.getElementById('new-address').value;
-            const price = document.getElementById('new-price').value;
-            const zip = document.getElementById('new-zip').value || "73170";
-            const size = document.getElementById('new-size').value || "2,000";
-            const year = document.getElementById('new-year').value || "2005";
-            const garage = document.getElementById('new-garage').value || "2 Xe";
-            const carpet = document.getElementById('new-carpet').value;
-            const rawTags = document.getElementById('new-tags').value;
-            const tags = rawTags ? rawTags.split(',').map(t => t.trim()) : ["Mới Cập Nhật"];
+        window.saveSurveyToFirebase = async function() {
+            if (!currentSurveyHouseId) return;
+            
+            const btn = document.querySelector('.survey-actions-footer button.bg-amber-500');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "Đang lưu...";
+            btn.disabled = true;
 
-            const priceNum = price.replace(/[$,]/g, '');
-            const formattedPrice = parseInt(priceNum) ? `$${parseInt(priceNum).toLocaleString()}` : price;
-            const estMonthly = parseInt(priceNum) ? Math.round(parseInt(priceNum) * 0.006).toLocaleString() : "1,700";
+            try {
+                const surveyData = {
+                    houseId: currentSurveyHouseId,
+                    timestamp: new Date().toISOString(),
+                    sections: {}
+                };
 
-            if (editId) {
-                const idx = housesList.findIndex(h => h.id == editId);
-                if (idx !== -1) {
-                    housesList[idx].address = address;
-                    housesList[idx].price = formattedPrice;
-                    housesList[idx].estMonthly = estMonthly;
-                    housesList[idx].zip = zip;
-                    housesList[idx].size = size;
-                    housesList[idx].year = year;
-                    housesList[idx].garage = garage;
-                    housesList[idx].carpet = carpet;
-                    housesList[idx].tags = tags;
-                    if (globalBase64Image) { housesList[idx].img = globalBase64Image; }
-                    alert("Đã cập nhật thay đổi và ghi đè dữ liệu thành công bồ nhé!");
+                const items = document.querySelectorAll('.survey-item-box');
+                for (let item of items) {
+                    const chk = item.querySelector('input[type="checkbox"]');
+                    const note = item.querySelector('textarea').value;
+                    const sectionId = chk.id;
+                    
+                    let photoUrl = null;
+                    if (surveyFiles[sectionId]) {
+                        photoUrl = await uploadImageToStorage(surveyFiles[sectionId], `surveys/${currentSurveyHouseId}`);
+                    }
+
+                    surveyData.sections[sectionId] = {
+                        checked: chk.checked,
+                        note: note,
+                        photoUrl: photoUrl
+                    };
                 }
-            } else {
-                const newId = housesList.length ? Math.max(...housesList.map(h => h.id)) + 1 : 1;
-                housesList.push({
-                    id: newId, address, zip, price: formattedPrice, estMonthly, size, year, garage, carpet, tags,
-                    mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}+OKC+${zip}`,
-                    img: globalBase64Image || "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500"
-                });
-                alert("Đã thêm căn hộ mới thành công!");
+
+                await addDoc(collection(db, "surveys"), surveyData);
+                
+                alert('Đã đồng bộ toàn bộ kết quả khảo sát kèm ảnh thực địa lên Firestore!');
+                closeSurveyModal();
+            } catch (error) {
+                console.error("Lỗi khi lưu Survey:", error);
+                alert("Lỗi Sync Cloud!");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
             }
-            resetFormState();
-            renderMainGrid();
-        });
+        }
     </script>
 </body>
 </html>
