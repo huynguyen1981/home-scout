@@ -392,6 +392,13 @@
             querySnapshot.forEach((doc) => {
                 housesList.push({ id: doc.id, ...doc.data() });
             });
+            // --- DÒNG KIỂM TRA QUAN TRỌNG ---
+            console.log("Dữ liệu đã tải về:", housesList); 
+            // --------------------------------
+    
+            if (housesList.length === 0) {
+                console.warn("Cảnh báo: Database kết nối được nhưng chưa có nhà nào trong collection 'houses'!");
+            }
             renderMainGrid();
         }
         
