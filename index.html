@@ -516,6 +516,7 @@
                     year: document.getElementById('new-year').value || "2005",
                     garage: document.getElementById('new-garage').value || "2 Xe",
                     carpet: document.getElementById('new-carpet').value,
+                    img: imageUrl,
                     tags: document.getElementById('new-tags').value ? document.getElementById('new-tags').value.split(',').map(t => t.trim()) : ["Mới Cập Nhật"],
                     mapUrl: `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address)}+OKC+${zip}`,
                 };
