@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OKC House Hunting Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -50,20 +51,69 @@
         </div>
     </div>
 
-    <div id="add-house-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-white w-full max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-2xl">
+    <div id="add-house-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl max-h-[95vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-folder-plus text-amber-500 mr-2"></i>Thêm Căn Hộ Phát Sinh</h3>
+                <h3 class="font-bold text-slate-900 text-base"><i class="fa-solid fa-folder-plus text-amber-500 mr-2"></i>Thêm Căn Hộ Thực Địa</h3>
                 <button onclick="toggleAddModal()" class="text-gray-400 hover:text-gray-600 text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <p class="text-xs text-gray-500 mb-4">Tính năng thêm căn hộ mới đồng bộ trực tiếp lên hệ thống đang được tối ưu hóa cho đợt cập nhật tiếp theo.</p>
-            <button onclick="toggleAddModal()" class="w-full bg-slate-800 text-white text-xs font-semibold py-2 rounded-lg">Đóng</button>
+            
+            <form id="add-house-form" class="space-y-3.5 text-xs font-semibold text-slate-700">
+                <div>
+                    <label class="block mb-1">Địa chỉ căn nhà *</label>
+                    <input type="text" id="new-address" required placeholder="Ví dụ: 1234 SW 149th St" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block mb-1">Giá bán ($) *</label>
+                        <input type="number" id="new-price" required placeholder="280000" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block mb-1">Mã vùng ZIP *</label>
+                        <input type="text" id="new-zip" required placeholder="73170" value="73170" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <label class="block mb-1">Diện tích (sqft)</label>
+                        <input type="text" id="new-size" placeholder="1,800 sqft" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block mb-1">Năm xây dựng</label>
+                        <input type="text" id="new-year" placeholder="2005" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block mb-1">Sức chứa Gara</label>
+                        <input type="text" id="new-garage" placeholder="2 Xe" value="2 Xe" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-1">Tình trạng trải thảm (Carpet)</label>
+                    <select id="new-carpet" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal bg-white focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                        <option value="Không thảm 🚫">Không thảm hoàn toàn 🚫</option>
+                        <option value="Ít thảm 👍">Ít thảm / Sàn gỗ 👍</option>
+                        <option value="Thảm phòng ngủ">Chỉ có thảm ở phòng ngủ</option>
+                        <option value="Toàn thảm ⚠️">Trải thảm toàn bộ nhà ⚠️</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block mb-1">Tag ghi chú nhanh (cách nhau bằng dấu phẩy)</label>
+                    <input type="text" id="new-tags" placeholder="Đúng tuyến Moore, Sát công viên, Giá tốt" class="w-full border border-gray-200 rounded-lg p-2.5 font-normal focus:ring-1 focus:ring-amber-500 focus:outline-none">
+                </div>
+                
+                <div class="pt-4 flex gap-2">
+                    <button type="button" onclick="toggleAddModal()" class="w-1/3 border border-gray-200 text-slate-700 py-2.5 rounded-lg font-bold text-center">Hủy</button>
+                    <button type="submit" id="btn-submit-house" class="w-2/3 bg-amber-500 hover:bg-amber-600 text-slate-950 py-2.5 rounded-lg font-bold shadow transition flex justify-center items-center">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Lưu Căn Hộ
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
         // Firebase cấu hình chính chủ của bồ
         const firebaseConfig = {
@@ -80,52 +130,67 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Khởi tạo data gốc cho 6 căn theo lộ trình di chuyển tối ưu
+        // Danh sách mảng chứa dữ liệu nhà (sẽ kết hợp cả 6 căn gốc + căn thêm mới)
+        let housesList = [];
+
+        // 6 căn nhà nền tảng ban đầu
         const initialHouses = [
-            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://www.google.com/maps/search/?api=1&query=15809+Windstop+Ct+Oklahoma+City+OK+73170", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500" },
-            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://www.google.com/maps/search/?api=1&query=13417+Briar+Hollow+Dr+Oklahoma+City+OK+73170", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500" },
-            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có Hầm Trú Bão SafeRoom", "Gara 3 Xe Máy Móc"], mapUrl: "https://www.google.com/maps/search/?api=1&query=9012+Crooked+Creek+Ln+Moore+OK+73160", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500" },
-            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3404+Paul+Dr+Moore+OK+73160", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500" },
-            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3812+New+London+Ave+Moore+OK+73160", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500" },
-            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://www.google.com/maps/search/?api=1&query=1009+Ashwood+Ln+Moore+OK+73160", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500" }
+            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730/tháng", size: "1,811 sqft", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://www.google.com/maps/search/?api=1&query=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500" },
+            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810/tháng", size: "2,260 sqft", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://www.google.com/maps/search/?api=1&query=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=500" },
+            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690/tháng", size: "1,778 sqft", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có Hầm Trú Bão SafeRoom", "Gara 3 Xe Máy Móc"], mapUrl: "https://www.google.com/maps/search/?api=1&query=9012+Crooked+Creek+Ln+Moore+OK", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500" },
+            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795/tháng", size: "1,764 sqft", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3404+Paul+Dr+Moore+OK", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500" },
+            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740/tháng", size: "1,672 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://www.google.com/maps/search/?api=1&query=3812+New+London+Ave+Moore+OK", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500" },
+            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720/tháng", size: "1,998 sqft", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://www.google.com/maps/search/?api=1&query=1009+Ashwood+Ln+Moore+OK", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500" }
         ];
 
-        // LOGIC KỶ NIỆM: Tự động seed thông tin 6 căn nhà lên Cloud Firestore nếu là lần chạy đầu tiên
-        async function checkAndSeedDatabase() {
+        // LOGIC KHỞI ĐỘNG & ĐỒNG BỘ: Tải toàn bộ danh sách nhà từ Cloud Firestore về máy
+        async function fetchAndRenderAllHouses() {
             try {
-                for (const house of initialHouses) {
-                    const docRef = doc(db, "houses", `house_${house.id}`);
+                // Kiểm tra gieo mầm dữ liệu nếu Firestore trống trơn
+                for (const h of initialHouses) {
+                    const docRef = doc(db, "houses", `house_${h.id}`);
                     const docSnap = await getDoc(docRef);
                     if (!docSnap.exists()) {
-                        await setDoc(docRef, {
-                            info: {
-                                address: house.address,
-                                zip: house.zip,
-                                price: house.price,
-                                estMonthly: house.estMonthly,
-                                size: house.size,
-                                year: house.year,
-                                garage: house.garage,
-                                carpet: house.carpet
-                    }
-                        }, { merge: true });
+                        await setDoc(docRef, { info: h }, { merge: true });
                     }
                 }
+
+                // Đọc toàn bộ tài liệu hiện có trong bộ sưu tập "houses" trên Firebase về để kết xuất ra màn hình
+                const querySnapshot = await getDocs(collection(db, "houses"));
+                let tempHouses = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.info) {
+                        tempHouses.push(data.info);
+                    }
+                });
+
+                // Sắp xếp lại theo ID để giữ nguyên lộ trình di chuyển 6 căn đầu
+                tempHouses.sort((a, b) => a.id - b.id);
+                housesList = tempHouses;
+
             } catch (err) {
-                console.error("Lỗi đồng bộ cấu trúc ban đầu: ", err);
+                console.warn("Lỗi Firebase Firestore, kích hoạt mảng dự phòng offline!", err);
+                housesList = initialHouses;
             }
-            renderMain();
+            renderMainGrid();
         }
 
-        // Hàm render giao diện chính lấy danh sách từ mảng ban đầu
-        function renderMain() {
+        // Hàm render giao diện dashboard chính
+        function renderMainGrid() {
             const grid = document.getElementById('houses-grid');
             grid.innerHTML = '';
-            initialHouses.forEach(h => {
+            
+            if (housesList.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-gray-500">Chưa có căn nhà nào trong DB.</div>`;
+                return;
+            }
+
+            housesList.forEach(h => {
                 grid.innerHTML += `
                     <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
                         <div class="relative h-44 bg-gray-200">
-                            <img src="${h.img}" class="w-full h-full object-cover">
+                            <img src="${h.img || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500'}" class="w-full h-full object-cover">
                             <div class="absolute bottom-3 left-3 flex flex-col gap-0.5 backdrop-blur-md bg-slate-900/80 px-2.5 py-1.5 rounded-lg text-white">
                                 <span class="font-mono text-sm font-bold text-amber-400">${h.price}</span>
                                 <span class="text-[10px] text-gray-300 font-medium"><i class="fa-solid fa-wallet mr-1"></i>Ước tính: ${h.estMonthly}</span>
@@ -135,9 +200,9 @@
                         <div class="p-4 flex-1 flex flex-col justify-between">
                             <div>
                                 <h2 class="font-bold text-slate-800 text-base leading-tight">${h.address}</h2>
-                                <p class="text-xs text-gray-500 mt-1">ZIP ${h.zip} • Đời ${h.year} • Diện tích ${h.size} • Gara ${h.garage}</p>
+                                <p class="text-xs text-gray-500 mt-1">ZIP ${h.zip} • Đời ${h.year || 'N/A'} • Diện tích ${h.size || 'N/A'} • Gara ${h.garage || '2 Xe'}</p>
                                 <div class="flex flex-wrap gap-1 mt-3">
-                                    ${h.tags.map(t => `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-medium">${t}</span>`).join('')}
+                                    ${h.tags && h.tags.length ? h.tags.map(t => `<span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-medium">${t}</span>`).join('') : '<span class="bg-gray-100 text-gray-400 text-[10px] px-2 py-0.5 rounded font-medium">Căn phát sinh</span>'}
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-2 pt-4 border-t mt-4">
@@ -153,15 +218,87 @@
                 `;
             });
 
-            // Gắn sự kiện click mở modal
-            initialHouses.forEach(h => {
-                document.getElementById(`btn-${h.id}`).addEventListener('click', () => openDetail(h.id));
+            // Gắn sự kiện click mở màn hình thẩm định
+            housesList.forEach(h => {
+                const btn = document.getElementById(`btn-${h.id}`);
+                if (btn) {
+                    btn.addEventListener('click', () => openDetail(h.id));
+                }
             });
         }
 
-        // Mở màn hình thẩm định chuyên sâu và đồng bộ Firebase
+        // XỬ LÝ SỰ KIỆN SUBMIT FORM - THÊM CĂN HỘ PHÁT SINH
+        document.getElementById('add-house-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnSubmit = document.getElementById('btn-submit-house');
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner animate-spin mr-1.5"></i> Đang tải lên Cloud...`;
+            btnSubmit.disabled = true;
+
+            const address = document.getElementById('new-address').value;
+            const priceNum = parseFloat(document.getElementById('new-price').value);
+            const zip = document.getElementById('new-zip').value;
+            const size = document.getElementById('new-size').value || "N/A";
+            const year = document.getElementById('new-year').value || "N/A";
+            const garage = document.getElementById('new-garage').value || "2 Xe";
+            const carpet = document.getElementById('new-carpet').value;
+            const tagsInput = document.getElementById('new-tags').value;
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : ["Căn phát sinh"];
+
+            // Thuật toán ước tính tiền nhà hàng tháng nhanh dựa trên lãi suất thực tế khu vực (~6.8% + Escrow)
+            const monthlyFactor = 0.0065; // Hệ số tính gốc + lãi + thuế OK + bảo hiểm
+            const calculatedMonthly = Math.round(priceNum * monthlyFactor);
+
+            const newId = Date.now(); // Tạo ID ngẫu nhiên bằng timestamp
+            
+            // Format hiển thị tiền tệ dạng $280,000
+            const formattedPrice = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(priceNum);
+
+            const newHouseObject = {
+                id: newId,
+                address: address,
+                zip: zip,
+                price: formattedPrice,
+                estMonthly: `$${calculatedMonthly.toLocaleString()}/tháng`,
+                size: size.includes('sqft') ? size : `${size} sqft`,
+                year: year,
+                garage: garage,
+                carpet: carpet,
+                tags: tags,
+                mapUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address + ' ' + zip)}`,
+                img: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=500" // Ảnh nhà mặc định chất lượng cao
+            };
+
+            try {
+                // Đẩy thông tin căn hộ mới trực tiếp lên bộ sưu tập houses của Cloud Firestore
+                await setDoc(doc(db, "houses", `house_${newId}`), {
+                    info: newHouseObject
+                }, { merge: true });
+
+                // Cập nhật lại mảng dữ liệu cục bộ và render giao diện tức thì
+                housesList.push(newHouseObject);
+                renderMainGrid();
+
+                // Đóng modal và reset form
+                document.getElementById('add-house-form').reset();
+                toggleAddModal();
+                alert("Đã thêm căn hộ phát sinh và sync lên Cloud thành công bồ nhé!");
+
+            } catch (err) {
+                console.error("Lỗi khi ghi đè dữ liệu mới lên Firebase:", err);
+                alert("Lỗi kết nối Firebase, nhưng app đã lưu tạm vào bộ nhớ máy để chạy tiếp!");
+                housesList.push(newHouseObject);
+                renderMainGrid();
+                toggleAddModal();
+            } finally {
+                btnSubmit.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Lưu Căn Hộ`;
+                btnSubmit.disabled = false;
+            }
+        });
+
+        // Mở màn hình thẩm định chuyên sâu và đồng bộ dữ liệu checklist kỹ thuật
         async function openDetail(id) {
-            const h = initialHouses.find(item => item.id === id);
+            const h = housesList.find(item => item.id === id);
             document.getElementById('modal-address').innerText = h.address;
             document.getElementById('modal-meta').innerText = `Giá bán: ${h.price} | Dự trù hàng tháng: ${h.estMonthly} | Thông số: ${h.size} (Gara ${h.garage})`;
             
@@ -209,7 +346,7 @@
                 `;
             }).join('');
 
-            // Gắn sự kiện xử lý chụp ảnh và lưu cho từng hạng mục
+            // Gắn sự kiện xử lý chụp ảnh và lưu từng hạng mục
             criteria.forEach(c => {
                 const fileInput = document.getElementById(`file_${id}_${c.key}`);
                 fileInput.addEventListener('change', function() {
@@ -264,12 +401,12 @@
 
         function closeDetailModal() { document.getElementById('detail-modal').classList.add('hidden'); }
         
-        // Expose các hàm điều khiển modal ra global window scope để ăn khớp với thuộc tính HTML onclick
+        // Expose ra global scope cho HTML gọi onclick
         window.toggleAddModal = toggleAddModal;
         window.closeDetailModal = closeDetailModal;
 
-        // Kích hoạt chu trình kiểm tra và hiển thị dữ liệu
-        checkAndSeedDatabase();
+        // Kích hoạt nạp toàn bộ dữ liệu từ Cloud Firestore
+        fetchAndRenderAllHouses();
     </script>
 </body>
 </html>
