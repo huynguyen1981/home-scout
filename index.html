@@ -367,24 +367,35 @@
 
         // Mình đang giữ nguyên link ảnh placeholder ở đây. 
         // Sau khi bồ test chạy, có thể up 6 ảnh nhà kia thẳng qua app luôn nhé.
-        let housesList = [
-            { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730", size: "1,811", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://maps.google.com/?q=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&fit=crop" },
-            { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810", size: "2,260", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://maps.google.com/?q=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&auto=format&fit=crop" },
-            { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690", size: "1,778", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có SafeRoom", "Gara 3 Xe Rộng"], mapUrl: "https://maps.google.com/?q=9012+Crooked+Creek+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&auto=format&fit=crop" },
-            { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795", size: "1,764", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://maps.google.com/?q=3404+Paul+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500&auto=format&fit=crop" },
-            { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740", size: "1,672", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://maps.google.com/?q=3812+New+London+Ave+Oklahoma+City", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&auto=format&fit=crop" },
-            { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720", size: "1,998", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://maps.google.com/?q=1009+Ashwood+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&auto=format&fit=crop" }
-        ];
-
+        // let housesList = [
+        //     { id: 1, address: "15809 Windstop Ct", zip: "73170", price: "$285,000", estMonthly: "$1,730", size: "1,811", year: "2007", garage: "2 Xe", carpet: "Ít thảm 👍", tags: ["View Hồ Độc Bản", "Đất Tuyệt Đẹp (9.1k)"], mapUrl: "https://maps.google.com/?q=15809+Windstop+Ct+Oklahoma+City", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=500&auto=format&fit=crop" },
+        //     { id: 2, address: "13417 Briar Hollow Dr", zip: "73170", price: "$297,677", estMonthly: "$1,810", size: "2,260", year: "1999", garage: "2 Xe", carpet: "Không thảm 🚫", tags: ["Đúng Tuyến Westmoore", "2 Tầng Rộng Rãi"], mapUrl: "https://maps.google.com/?q=13417+Briar+Hollow+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?w=500&auto=format&fit=crop" },
+        //     { id: 3, address: "9012 Crooked Creek Ln", zip: "73160", price: "$272,000", estMonthly: "$1,690", size: "1,778", year: "2009", garage: "3 Xe 🏎️", carpet: "Thảm phòng ngủ", tags: ["Có SafeRoom", "Gara 3 Xe Rộng"], mapUrl: "https://maps.google.com/?q=9012+Crooked+Creek+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500&auto=format&fit=crop" },
+        //     { id: 4, address: "3404 Paul Dr", zip: "73160", price: "$289,900", estMonthly: "$1,795", size: "1,764", year: "2008", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Đất Khủng 0.35 Acre", "Có Phòng Flex AC Riêng"], mapUrl: "https://maps.google.com/?q=3404+Paul+Dr+Oklahoma+City", img: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=500&auto=format&fit=crop" },
+        //     { id: 5, address: "3812 New London Ave", zip: "73160", price: "$275,000", estMonthly: "$1,740", size: "1,672", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Khu Gated Biệt Lập", "Phòng Sunroom Đẹp"], mapUrl: "https://maps.google.com/?q=3812+New+London+Ave+Oklahoma+City", img: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=500&auto=format&fit=crop" },
+        //     { id: 6, address: "1009 Ashwood Ln", zip: "73160", price: "$275,000", estMonthly: "$1,720", size: "1,998", year: "2005", garage: "2 Xe", carpet: "Thảm phòng ngủ", tags: ["Văn Phòng Custom Sẵn", "Chủ Vừa Giảm $10k"], mapUrl: "https://maps.google.com/?q=1009+Ashwood+Ln+Oklahoma+City", img: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=500&auto=format&fit=crop" }
+        // ];
+        
+        let housesList = [];
         let currentHouseImageFile = null; 
         let surveyFiles = {}; 
         let currentSurveyHouseId = null;
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderMainGrid();
+            await loadHousesFromFirestore();
+            // renderMainGrid();
             setupCriteriaImageHandlers();
         });
 
+        async function loadHousesFromFirestore() {
+            const querySnapshot = await getDocs(collection(db, "houses"));
+            housesList = [];
+            querySnapshot.forEach((doc) => {
+                housesList.push({ id: doc.id, ...doc.data() });
+            });
+            renderMainGrid();
+        }
+        
         function renderMainGrid() {
             const grid = document.getElementById('houses-grid');
             grid.innerHTML = '';
@@ -516,7 +527,7 @@
                     year: document.getElementById('new-year').value || "2005",
                     garage: document.getElementById('new-garage').value || "2 Xe",
                     carpet: document.getElementById('new-carpet').value,
-                    img: imageUrl,
+                    img: imageUrl || document.getElementById('image-preview').src,
                     tags: document.getElementById('new-tags').value ? document.getElementById('new-tags').value.split(',').map(t => t.trim()) : ["Mới Cập Nhật"],
                     mapUrl: `https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(address)}+OKC+${zip}`,
                 };
